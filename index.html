@@ -35,7 +35,7 @@ table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:4px 6px;b
 <div class="tabs" id="tb"></div><div id="v"></div></div>
 <script>
 // ==========================================
-// 1. DÁN LINK CSV CỦA SHEET "DuLieu" VÀO ĐÂY
+// 1. LINK TSV CỦA SHEET "DuLieu"
 // ==========================================
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9xzY0vNnMNH-c96og9kurUvnZESKcGzSgxolNaCmgh4P_0wtGcNvu6Hi70YlUtD9K_61KA0LzUXhj/pub?gid=118958219&single=true&output=tsv";
 
@@ -135,13 +135,16 @@ async function loadGoogleSheetData() {
         const res = await fetch(SHEET_CSV_URL);
         const text = await res.text();
         
-        // Parse CSV (Hỗ trợ ngoặc kép và dấu phẩy an toàn)
+        // Parse TSV (Do link sử dụng output=tsv)
         const rows = [];
         let row = [], inQuotes = false, val = "";
         for (let i = 0; i < text.length; i++) {
             const c = text[i];
             if (c === '"') inQuotes = !inQuotes;
-            else if (c === ',' && !inQuotes) { row.push(val.trim()); val = ""; }
+            // ==========================================
+            // QUAN TRỌNG: Sửa dấu phẩy (',') thành dấu Tab ('\t')
+            // ==========================================
+            else if (c === '\t' && !inQuotes) { row.push(val.trim()); val = ""; }
             else if (c === '\n' && !inQuotes) { 
                 row.push(val.trim()); 
                 if(row.join('') !== '') rows.push(row); 
@@ -168,9 +171,9 @@ async function loadGoogleSheetData() {
             if (!thangMatch) continue;
             const thang = parseInt(thangMatch[0]);
 
-            // Làm sạch số tiền Bán lẻ & B2B
-            const banleStr = cols[2].replace(/,/g, '.'); 
-            const b2bStr = cols[3].replace(/,/g, '.');
+            // Làm sạch số tiền Bán lẻ & B2B (Thêm dấu ? để tránh lỗi nếu cột trống)
+            const banleStr = cols[2] ? cols[2].replace(/,/g, '.') : "0"; 
+            const b2bStr = cols[3] ? cols[3].replace(/,/g, '.') : "0";
             const banle = parseFloat(banleStr.replace(/[^\d.-]/g, '')) || 0;
             const b2b = parseFloat(b2bStr.replace(/[^\d.-]/g, '')) || 0;
 
