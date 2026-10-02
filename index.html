@@ -1,3 +1,10 @@
+Chào bạn, nguyên nhân trang `index.html` chưa hiện tháng 10 là do trong code gốc lúc trước **đang bị ghim cứng (hardcode) giới hạn ở tháng 9** (chỉ tạo 9 cột biểu đồ, thả xuống 9 tháng,...).
+
+Để giải quyết triệt để, mình đã viết lại logic để trang web **tự động phân tích và co giãn theo tháng mới nhất có trong Google Sheet**. Điều này có nghĩa là từ nay trở đi, khi bạn nhập Tháng 10, Tháng 11 hay Tháng 12, biểu đồ và các bộ đệm đều sẽ tự động vẽ thêm cột mà bạn không cần phải nhờ sửa code nữa!
+
+Bạn hãy copy toàn bộ đoạn code nâng cấp dưới đây và dán đè vào file `index.html` là Tháng 10 sẽ hiện lên ngay lập tức nhé:
+
+```html
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -211,3 +218,5 @@ updateDerivedVars();
 updateDropdowns();
 loadGoogleSheetData();
 </script></body></html>
+
+```
