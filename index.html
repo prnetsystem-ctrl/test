@@ -1,10 +1,3 @@
-Chào bạn, nguyên nhân trang `index.html` chưa hiện tháng 10 là do trong code gốc lúc trước **đang bị ghim cứng (hardcode) giới hạn ở tháng 9** (chỉ tạo 9 cột biểu đồ, thả xuống 9 tháng,...).
-
-Để giải quyết triệt để, mình đã viết lại logic để trang web **tự động phân tích và co giãn theo tháng mới nhất có trong Google Sheet**. Điều này có nghĩa là từ nay trở đi, khi bạn nhập Tháng 10, Tháng 11 hay Tháng 12, biểu đồ và các bộ đệm đều sẽ tự động vẽ thêm cột mà bạn không cần phải nhờ sửa code nữa!
-
-Bạn hãy copy toàn bộ đoạn code nâng cấp dưới đây và dán đè vào file `index.html` là Tháng 10 sẽ hiện lên ngay lập tức nhé:
-
-```html
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -41,6 +34,9 @@ table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:4px 6px;b
 <label>Nhóm <select id="g"><option value="all">Tất cả</option><option>A</option><option>B</option><option>C</option><option>D</option></select></label><label><input type="checkbox" id="vp"> Gồm VP BĐTT (tab Hiệu suất)</label></div>
 <div class="tabs" id="tb"></div><div id="v"></div></div>
 <script>
+// ==========================================
+// LINK TSV CỦA SHEET "DuLieu"
+// ==========================================
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9xzY0vNnMNH-c96og9kurUvnZESKcGzSgxolNaCmgh4P_0wtGcNvu6Hi70YlUtD9K_61KA0LzUXhj/pub?gid=118958219&single=true&output=tsv";
 
 let D={"u": ["Chí Hòa", "Tân Bình", "Bà Quẹo", "Bàu Cát", "Tân Sơn Nhất", "Tham Lương", "Trường Chinh", "Bảy Hiền", "Phú Thọ", "Ngô Quyền", "VP BĐTT Phú Thọ", "Hoà Hưng", "3 tháng 2", "Sư Vạn Hạnh", "Quận 10", "Bà Hạt", "Tân Phú", "Tây Thạnh", "Gò Dầu", "Luỹ Bán Bích", "Phú Thọ Hòa"], "r": [[12, 11, 8, 21, 12, 11, 9, 21, 24], [19, 24, 20, 26, 23, 20, 19, 23, 44], [0, 7, 7, 5, 3, 6, 8, 10, 7], [10, 2, 4, 19, 8, 12, 9, 18, 11], [2, 4, 4, 2, 3, 5, 6, 31, 45], [0, 0, 0, 0, 0, 0, 0, 0, 0], [6, 6, 5, 6, 4, 6, 5, 6, 9], [50, 3, 6, 13, 4, 12, 14, 30, 27], [21, 13, 4, 73, 606, 350, 56, 96, 271], [181, 5, 6, 9, 5, 8, 7, 34, 77], [7, 29, 3, 11, 215, 598, 598, 1466, 1643], [11, 45, 5, 10, 5, 8, 10, 6, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0], [12, 19, 5, 9, 6, 9, 7, 7, 14], [539, 14, 1098, 56, 27, 15, 52, 100, 138], [153, 4, 4, 4, 4, 4, 4, 21, 33], [5, 0, 38, 30, 13, 7, 16, 24, 32], [33, 9, 14, 8, 9, 19, 18, 16, 17], [21, 10, 3, 7, 5, 12, 9, 10, 18], [3, 1, 3, 11, 9, 5, 6, 7, 9], [8, 4, 5, 18, 17, 15, 18, 16, 17]], "b": [[0, 0, 594, 0, 0, 0, 0, 0, 0], [0, 0, 1069, 0, 0, 0, 0, 0, 0], [0, 0, 594, 0, 0, 0, 0, 0, 0], [0, 0, 475, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 475, 0, 0, 0, 0, 0, 0], [0, 0, 594, 0, 12, 0, 0, 0, 0], [0, 0, 1029, 0, 0, 0, 0, 0, 0], [0, 0, 475, 0, 0, 0, 0, 0, 0], [3053, 4084, 4008, 2026, 14581, 18691, 9223, 10039, 12531], [0, 0, 487, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 365, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 467, 0, 0, 0, 0, 0, 0], [0, 0, 1206, 0, 0, 0, 0, 0, 0], [0, 0, 594, 0, 0, 0, 0, 0, 0], [0, 0, 475, 0, 0, 0, 0, 0, 0], [0, 0, 475, 5, 0, 0, 0, 0, 0], [0, 0, 594, 0, 0, 0, 0, 0, 0]]};
@@ -141,7 +137,10 @@ function R(){
 async function loadGoogleSheetData() {
     if (!SHEET_CSV_URL.startsWith("http")) return;
     try {
-        const res = await fetch(SHEET_CSV_URL);
+        // [QUAN TRỌNG] Thêm bộ đếm thời gian để XÓA CACHE, ép trình duyệt tải dữ liệu mới nhất
+        const noCacheUrl = SHEET_CSV_URL + "&_t=" + new Date().getTime();
+        
+        const res = await fetch(noCacheUrl);
         const text = await res.text();
         
         const rows = [];
@@ -164,6 +163,20 @@ async function loadGoogleSheetData() {
         const rMap = {}, bMap = {};
         let detectedMax = 0;
 
+        // [QUAN TRỌNG] Hàm chuẩn hóa định dạng số Việt Nam
+        const parseVNNumber = (str) => {
+            let s = (str || "").trim();
+            if (s === '-' || s === '') return 0;
+            
+            // Xóa toàn bộ dấu chấm phân cách hàng nghìn (VD: 12.531 -> 12531)
+            s = s.replace(/\./g, '');
+            // Biến dấu phẩy thập phân thành dấu chấm để máy tính hiểu
+            s = s.replace(/,/g, '.');
+            
+            s = s.replace(/[^\d.-]/g, '');
+            return parseFloat(s) || 0;
+        };
+
         for (let i = 1; i < rows.length; i++) {
             const cols = rows[i];
             if (cols.length < 4 || !cols[0]) continue;
@@ -178,10 +191,8 @@ async function loadGoogleSheetData() {
             if (thang >= 1 && thang <= 12) {
                 if (thang > detectedMax) detectedMax = thang;
                 
-                const banleStr = cols[2] ? cols[2].replace(/,/g, '.') : "0"; 
-                const b2bStr = cols[3] ? cols[3].replace(/,/g, '.') : "0";
-                const banle = parseFloat(banleStr.replace(/[^\d.-]/g, '')) || 0;
-                const b2b = parseFloat(b2bStr.replace(/[^\d.-]/g, '')) || 0;
+                const banle = parseVNNumber(cols[2]);
+                const b2b = parseVNNumber(cols[3]);
 
                 if (!rMap[bdx]) {
                     rMap[bdx] = Array(12).fill(0);
@@ -196,6 +207,7 @@ async function loadGoogleSheetData() {
         if (bdxList.length > 0) {
             if (detectedMax > 0) {
                 MAX_MONTH = detectedMax;
+                // Nếu đang tải dữ liệu lần đầu, tự động focus vào tháng mới nhất
                 if (S.m !== 0) S.m = MAX_MONTH;
             }
             D.u = bdxList;
@@ -218,5 +230,3 @@ updateDerivedVars();
 updateDropdowns();
 loadGoogleSheetData();
 </script></body></html>
-
-```
