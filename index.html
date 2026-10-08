@@ -224,10 +224,319 @@ function all(){r1();r2();r3();r4();r6(); if(Tender_Data.length) renderTenderTab(
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.v2').forEach(x=>x.classList.toggle('on',x.id=='p'+b.dataset.t));$('fb').style.display=b.dataset.t=='5'||b.dataset.t=='6'?'none':'flex'}));
 
 // ==============================================
-// LOAD DATA DOANH THU & ĐẤU THẦU
+// FETCH DOANH THU & ĐẤU THẦU ĐỘC LẬP
 // ==============================================
 async function loadGoogleSheetData() {
     try {
         const noCacheUrl = SHEET_CSV_URL + "&_t=" + new Date().getTime();
         const res = await fetch(noCacheUrl);
-        const text = await
+        const text = await res.text();
+        
+        if (text.trim().startsWith("<!DOCTYPE html>")) {
+            $('loading').innerHTML = `<b>LỖI KẾT NỐI:</b><br><br>Google Sheet đang bị chặn quyền truy cập!<br>Đảm bảo đã bỏ tích "Yêu cầu người xem phải đăng nhập"`;
+            return;
+        }
+
+        const rows = [];
+        let row = [], inQuotes = false, val = "";
+        let delimiter = '\t';
+        if (text.indexOf('\t') === -1) delimiter = text.indexOf(';') !== -1 ? ';' : ',';
+        
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') inQuotes = !inQuotes;
+            else if (c === delimiter && !inQuotes) { row.push(val.trim()); val = ""; }
+            else if (c === '\n' && !inQuotes) { row.push(val.trim()); if(row.join('') !== '') rows.push(row); row = []; val = ""; }
+            else if (c !== '\r') val += c;
+        }
+        if (val) row.push(val.trim());
+        if (row.length > 0 && row.join('') !== '') rows.push(row);
+
+        const U_map = {}; 
+        let detectedMax = 0;
+        const M_groups = {
+            "Khác": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "TT Hà Nội": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "TT TP.HCM": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "Tỉnh/TP": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "PHBC+TCDN": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]}
+        };
+
+        Object.keys(M_groups).forEach(g => {
+            ['BL','GT','B2B'].forEach(c => {
+                M_groups[g][c].kh = Array(12).fill(0);
+                M_groups[g][c].th = Array(12).fill(0);
+                M_groups[g][c].ck = Array(12).fill(0);
+            });
+            M_groups[g].the = Array(12).fill(0);
+        });
+
+        const N_arr = [];
+
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i];
+            if (cols.length < 3 || !cols[0]) continue;
+            
+            let bdx = cols[0] ? cols[0].toString().trim() : "";
+            let nhom = cols[1] ? cols[1].toString().trim() : "";
+            
+            let bdx_up = bdx.toUpperCase();
+            let nhom_up = nhom.toUpperCase();
+
+            if (nhom_up.includes("TCDN") || nhom_up.includes("TCND") || nhom_up.includes("PHBC") ||
+                bdx_up.includes("TCDN") || bdx_up.includes("TCND") || bdx_up.includes("PHBC")) {
+                nhom = "PHBC+TCDN";
+                bdx = "(PHBC+TCDN)";
+            } else if (!nhom) {
+                nhom = "Khác";
+            }
+
+            const thangMatch = cols[2] ? cols[2].toString().match(/\d+/) : null;
+            if (!thangMatch) continue;
+            const thang = parseInt(thangMatch[0]);
+
+            if (thang >= 1 && thang <= 12) {
+                const kh_bl = parseVNNumber(cols[4]);
+                const kh_gt = parseVNNumber(cols[5]);
+                const kh_b2b = parseVNNumber(cols[6]);
+                
+                const th_bl = parseVNNumber(cols[8]);
+                const th_gt = parseVNNumber(cols[9]);
+                const th_b2b = parseVNNumber(cols[10]);
+                
+                const ck_tong = parseVNNumber(cols[11]);
+                const ck_bl = parseVNNumber(cols[12]);
+                const ck_gt = parseVNNumber(cols[13]);
+                const ck_b2b = parseVNNumber(cols[14]);
+
+                const th_the = parseVNNumber(cols[15]);
+
+                if (th_bl !== 0 || th_gt !== 0 || th_b2b !== 0 || th_the !== 0 || ck_tong !== 0 || ck_bl !== 0 || ck_gt !== 0 || ck_b2b !== 0) {
+                    if (thang > detectedMax) detectedMax = thang;
+                }
+
+                if (!U_map[bdx]) {
+                    U_map[bdx] = {
+                        nhom: nhom,
+                        kh_bl: 0, kh_gt: 0, kh_b2b: 0,
+                        th_bl_arr: Array(12).fill(0),
+                        th_gt_arr: Array(12).fill(0),
+                        th_b2b_arr: Array(12).fill(0),
+                        ck_tong_arr: Array(12).fill(0),
+                        th_the_arr: Array(12).fill(0),
+                        tot_the: 0
+                    };
+                }
+                
+                U_map[bdx].kh_bl += kh_bl; 
+                U_map[bdx].kh_gt += kh_gt;
+                U_map[bdx].kh_b2b += kh_b2b;
+                
+                U_map[bdx].th_bl_arr[thang - 1] += th_bl;
+                U_map[bdx].th_gt_arr[thang - 1] += th_gt;
+                U_map[bdx].th_b2b_arr[thang - 1] += th_b2b;
+                U_map[bdx].ck_tong_arr[thang - 1] += ck_tong;
+                U_map[bdx].th_the_arr[thang - 1] += th_the;
+                U_map[bdx].tot_the += th_the;
+
+                if(!M_groups[nhom]) {
+                    M_groups[nhom] = {BL:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, GT:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, B2B:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, the:Array(12).fill(0)};
+                }
+                
+                M_groups[nhom].BL.kh[thang-1] += kh_bl;
+                M_groups[nhom].GT.kh[thang-1] += kh_gt;
+                M_groups[nhom].B2B.kh[thang-1] += kh_b2b;
+
+                M_groups[nhom].BL.th[thang-1] += th_bl;
+                M_groups[nhom].GT.th[thang-1] += th_gt;
+                M_groups[nhom].B2B.th[thang-1] += th_b2b;
+                
+                M_groups[nhom].BL.ck[thang-1] += ck_bl;
+                M_groups[nhom].GT.ck[thang-1] += ck_gt;
+                M_groups[nhom].B2B.ck[thang-1] += ck_b2b;
+
+                M_groups[nhom].the[thang-1] += th_the;
+
+                if (th_the < 0) {
+                    N_arr.push([bdx, nhom, thang, th_the]);
+                }
+            }
+        }
+
+        if (Object.keys(U_map).length > 0) {
+            max_month_th = detectedMax > 0 ? detectedMax : 1; 
+            
+            U_data = [];
+            V_data = [];
+            
+            for (const bdx in U_map) {
+                const u = U_map[bdx];
+                
+                U_data.push([
+                    bdx, u.nhom, 
+                    u.kh_bl, u.kh_gt, u.kh_b2b, 
+                    sm(u.th_bl_arr, max_month_th), sm(u.th_gt_arr, max_month_th), sm(u.th_b2b_arr, max_month_th), 
+                    sm(u.ck_tong_arr, max_month_th), 
+                    u.tot_the
+                ]);
+
+                V_data.push([
+                    bdx, u.nhom,
+                    u.kh_bl, u.kh_gt, u.kh_b2b,
+                    u.th_bl_arr.slice(0, 12),
+                    u.th_gt_arr.slice(0, 12),
+                    u.th_b2b_arr.slice(0, 12),
+                    u.ck_tong_arr.slice(0, 12),
+                    u.th_the_arr.slice(0, 12)
+                ]);
+            }
+
+            V_data.sort((a,b) => {
+                if (a[0] === '(PHBC+TCDN)') return -1;
+                if (b[0] === '(PHBC+TCDN)') return 1;
+                if (a[1] === 'Khác') return 1;
+                if (b[1] === 'Khác') return -1;
+                return a[0].localeCompare(b[0], 'vi');
+            });
+
+            M_data = M_groups;
+            N_data = N_arr;
+
+            const smDropdown = $('fn');
+            smDropdown.innerHTML = '';
+            for(let j=1; j<=max_month_th; j++) {
+                smDropdown.add(new Option('T'+j, j, 0, j===max_month_th));
+            }
+            $('fn').value = max_month_th;
+
+            $('page-sub').innerText = `Dữ liệu thực hiện cập nhật tự động đến T${max_month_th}/${latest_year} · Đơn vị giả định: triệu đồng · Được thiết kế bởi ThanhDD`;
+            
+            $('loading').style.display = 'none';
+            rrep();
+            
+            $('fu').innerHTML = '<option value="">— Tất cả đơn vị —</option>';
+            V_data.forEach(v=>$('fu').add(new Option(v[0],v[0])));
+            
+            all();
+        } else {
+             $('loading').innerHTML = `<b>LỖI DỮ LIỆU:</b><br><br>Không tìm thấy dữ liệu hợp lệ trong Sheet.`;
+        }
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu từ Google Sheet:", error);
+    }
+}
+
+async function loadTenderData() {
+    try {
+        const res = await fetch(TENDER_CSV_URL + "&_t=" + new Date().getTime());
+        const text = await res.text();
+
+        const rows = [];
+        let row = [], inQuotes = false, val = "";
+        let delimiter = '\t';
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') inQuotes = !inQuotes;
+            else if (c === delimiter && !inQuotes) { row.push(val.trim()); val = ""; }
+            else if (c === '\n' && !inQuotes) { row.push(val.trim()); if(row.join('') !== '') rows.push(row); row = []; val = ""; }
+            else if (c !== '\r') val += c;
+        }
+        if (val) row.push(val.trim());
+        if (row.length > 0 && row.join('') !== '') rows.push(row);
+
+        if (rows.length > 1) {
+            // Lấy Header ở dòng 0
+            const h = rows[0].map(s => s ? s.toLowerCase() : "");
+            
+            // Tìm chính xác số chỉ mục (Index) của các cột theo ảnh
+            const cT = h.findIndex(x => x.includes("tình trạng"));
+            const cThang = h.findIndex(x => x === "tháng" || x === "thang");
+            const cDv = h.findIndex(x => x.includes("đơn vị tham gia") || x.includes("bàn thực hiện"));
+            const cGoi = h.findIndex(x => x.includes("tóm tắt công việc"));
+            const cCDT = h.findIndex(x => x.includes("chủ đầu tư"));
+            const cDT = h.findIndex(x => x.includes("dự toán mua sắm"));
+            const cGia = h.findIndex(x => x.includes("giá trúng thầu"));
+
+            Tender_Data = rows.slice(1).map(r => ({
+                tinhTrang: cT >= 0 ? (r[cT] || '') : '',
+                thang: cThang >= 0 ? (r[cThang] || '') : '',
+                donVi: cDv >= 0 ? (r[cDv] || '') : '',
+                tenGoi: cGoi >= 0 ? (r[cGoi] || '') : '',
+                chuDauTu: cCDT >= 0 ? (r[cCDT] || '') : '',
+                duToan: cDT >= 0 ? parseVNNumber(r[cDT]) : 0,
+                giaTrung: cGia >= 0 ? parseVNNumber(r[cGia]) : 0
+            }));
+            renderTenderTab();
+        }
+    } catch(e) {
+        console.error("Lỗi tải data Đấu thầu", e);
+        $('tender-kpi').innerHTML = `<div class="k" style="color:red">Đang chờ cập nhật dữ liệu đấu thầu...</div>`;
+    }
+}
+
+function renderTenderTab() {
+    if (!Tender_Data.length) return;
+    const n = +$('fn').value;
+    const sel = $('fu').value;
+
+    let filtered = Tender_Data.filter(d => {
+        if (sel && sel !== "(PHBC+TCDN)" && d.donVi !== sel) return false;
+        
+        let tMatch = d.thang.match(/\d+/);
+        let m = tMatch ? parseInt(tMatch[0]) : 0;
+        if (n > 0 && m > n) return false;
+        
+        return true;
+    });
+
+    let total = filtered.length;
+    let won = filtered.filter(d => d.tinhTrang.toLowerCase().includes('trúng')).length;
+    let lost = filtered.filter(d => d.tinhTrang.toLowerCase().includes('trượt') || d.tinhTrang.toLowerCase().includes('hủy') || d.tinhTrang.toLowerCase().includes('không')).length;
+    let pending = total - won - lost;
+
+    let valDuToan = filtered.reduce((sum, d) => sum + d.duToan, 0);
+    let valGiaTrung = filtered.reduce((sum, d) => sum + d.giaTrung, 0);
+    let winRate = (won + lost) > 0 ? (won / (won + lost)) : 0;
+
+    $('tender-kpi').innerHTML = `
+        <div class="k"><span>Tổng số gói thầu tham gia</span><b>${total}</b></div>
+        <div class="k"><span>Số gói đã Trúng thầu</span><b class="ok">${won}</b></div>
+        <div class="k"><span>Số gói Trượt / Hủy</span><b class="fl">${lost}</b></div>
+        <div class="k"><span>Đang đánh giá</span><b style="color:var(--a)">${pending}</b></div>
+        <div class="k"><span>Tổng dự toán (Tr.đ)</span><b>${f(valDuToan/1000000)}</b></div>
+        <div class="k"><span>Tổng giá trúng thầu (Tr.đ)</span><b class="ok">${f(valGiaTrung/1000000)}</b></div>
+        <div class="k"><span>Tỷ lệ trúng thầu</span><b>${p(winRate)}</b></div>
+    `;
+
+    let tbody = filtered.map(d => `
+        <tr>
+            <td>${d.donVi}</td>
+            <td style="white-space:normal;text-align:left;min-width:250px">${d.tenGoi}</td>
+            <td style="white-space:normal;text-align:left">${d.chuDauTu}</td>
+            <td>${d.duToan ? f(d.duToan) : '-'}</td>
+            <td class="ok">${d.giaTrung ? f(d.giaTrung) : '-'}</td>
+            <td><span class="bd ${d.tinhTrang.toLowerCase().includes('trúng')?'s-g':d.tinhTrang.toLowerCase().includes('trượt')||d.tinhTrang.toLowerCase().includes('hủy')||d.tinhTrang.toLowerCase().includes('không')?'s-r':'s-y'}">${d.tinhTrang}</span></td>
+        </tr>
+    `).join('');
+
+    $('tender-table').innerHTML = `
+        <table>
+            <tr>
+                <th>Đơn vị tham gia</th>
+                <th style="text-align:left">Tên gói thầu</th>
+                <th style="text-align:left">Chủ đầu tư</th>
+                <th>Dự toán mua sắm (VND)</th>
+                <th>Giá trúng thầu (VND)</th>
+                <th style="text-align:center">Tình trạng</th>
+            </tr>
+            ${tbody}
+        </table>
+    `;
+}
+
+// KHỞI CHẠY ĐỒNG THỜI CẢ 2 SHEET
+window.onload = () => {
+    loadGoogleSheetData();
+    loadTenderData();
+};
+</script></body></html>
