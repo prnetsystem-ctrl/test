@@ -19,4 +19,744 @@ select{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-ra
 .sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:6px;text-align:right;border-bottom:1px solid var(--bd)}th:first-child,td:first-child{text-align:left}td.h{color:#fff;font-weight:600}
 .ok{color:var(--g);font-weight:600}.fl{color:var(--r);font-weight:600}.pu{color:var(--pu);font-weight:600}.v2{display:none}.v2.on{display:block}svg{width:100%;height:auto}svg text{fill:var(--mu);font-size:10px}
 .mix{display:flex;height:20px;border-radius:4px;overflow:hidden;margin:3px 0}.mix div{color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
-.ur:hover{background:var(--bg)}.ur.sel{background:var(--bg);outline:1px solid var(--ac);border-radius
+.ur:hover{background:var(--bg)}.ur.sel{background:var(--bg);outline:1px solid var(--ac);border-radius:4px}.mk{position:absolute;top:-2px;bottom:-2px;border-left:2px solid var(--tx);opacity:.45}.btn{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:4px 10px;font:inherit;cursor:pointer}
+.ug{column-width:270px;column-gap:20px;margin-top:8px}.ug .row{break-inside:avoid;margin:1px 0;padding:1px 3px;font-size:11.5px;gap:5px}.ug .t{height:8px}.mix div{white-space:nowrap}
+.rp{max-width:880px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:18px 24px}.rp .rt{font-size:18px;color:var(--ac);margin:0 0 4px}.rp .rs{color:var(--ac);font-size:13px;opacity:.85}.rp .rm,.rp .rn{color:var(--mu);font-size:11.5px;font-style:italic}.rp .rm{border-bottom:2px solid var(--ac);padding-bottom:8px;margin:4px 0 10px}.rp h3{font-size:14px;margin:16px 0 6px;color:var(--ac)}.rp p{margin:6px 0;line-height:1.6}.rp ul{padding-left:20px;margin:6px 0}.rp li{margin:5px 0;line-height:1.55}.rp table{margin:8px 0}
+#loading {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: var(--bg);z-index: 9999;display: flex;justify-content: center;align-items: center;font-size: 16px;color: var(--pri); text-align: center; padding: 20px;}
+.s-g{background:var(--g)}.s-y{background:var(--a)}.s-r{background:var(--r)}.bd{padding:2px 8px;border-radius:12px;font-size:11px;color:#fff;display:inline-block;white-space:nowrap;}
+.t-h3 {text-transform: uppercase; color: var(--tx); font-size: 13px; margin-bottom: 12px; font-weight: bold;}
+</style></head><body>
+<div id="loading">Đang tải dữ liệu từ Google Sheet...</div>
+<h1>Kết quả kinh doanh dịch vụ Phân phối bán lẻ trên mạng lưới Bưu điện</h1>
+<div class="sub" id="page-sub">Dữ liệu thực hiện cập nhật tự động · Đơn vị giả định: triệu đồng · Được thiết kế bởi ThanhDD </div>
+<div class="tabs">
+    <button data-t="1" class="on">1. Tổng quan</button>
+    <button data-t="u">2. Kết quả đơn vị</button>
+    <button data-t="2">3. Xu hướng tháng</button>
+    <button data-t="3">4. Khoảng trống &amp; xếp hạng</button>
+    <button data-t="4">5. Doanh thu thẻ</button>
+    <button data-t="6">6. Đấu thầu</button>
+    <button data-t="5">7. Báo cáo đánh giá</button>
+</div>
+<div class="bar" id="fb"><label>Nhóm đơn vị <select id="fg"><option value="">Tất cả</option><option>TT Hà Nội</option><option>TT TP.HCM</option><option>Tỉnh/TP</option><option>PHBC+TCDN</option></select></label>
+<label>Kênh <select id="fc"><option value="T">Tổng</option><option value="BL">Bán lẻ</option><option value="GT">GT</option><option value="B2B">B2B</option></select></label>
+<label>Lũy kế đến tháng <select id="fn"></select></label><span class="lg" id="fh"></span></div>
+
+<div class="v2 on" id="p1"><div class="kp" id="k1"></div><div class="grid"><div class="c"><h2>Kết quả theo kênh</h2><div id="ch"></div></div><div class="c"><h2>Cơ cấu kênh: KH và thực hiện lũy kế</h2><div id="mx"></div></div></div></div>
+<div class="v2" id="pu">
+<div class="bar" style="margin-bottom:10px"><label>Chọn đơn vị <select id="fu"><option value="">— Tất cả đơn vị —</option></select></label><label>Kỳ đánh giá <select id="fq"><option value="0">Lũy kế (so với KH năm)</option><option value="1">Quý 1</option><option value="2">Quý 2</option><option value="3">Quý 3</option><option value="4">Quý 4</option></select></label><span class="lg" id="us"></span></div>
+<div class="c" style="margin-bottom:10px"><h2 id="uh"></h2><div id="dist"></div><div id="ub" class="ug"></div><div class="lg" id="ul"></div></div>
+<div class="grid"><div class="c"><h2>Kết quả theo từng quý</h2><div id="qc"></div></div><div class="c"><h2>Chi tiết theo quý và % hoàn thành theo kênh</h2><div class="sc" id="qt"></div></div></div>
+<div id="ud"></div></div>
+<div class="v2" id="p2"><div class="grid"><div class="c"><h2>Thực hiện theo tháng so với KH và cùng kỳ</h2><div id="g1"></div><div class="lg">Cột = thực hiện · đường vàng = KH · đường xám đứt = cùng kỳ năm trước. B2B dồn vào cuối quý.</div></div><div class="c"><h2>Lũy kế thực hiện so với KH lũy kế</h2><div id="g2"></div></div></div></div>
+<div class="v2" id="p3"><div class="grid"><div class="c"><h2>Xếp hạng % mục tiêu lũy kế</h2><div id="rk"></div><div class="lg">Vạch đứt = 100% mục tiêu 70% KH năm · xanh ≥100%, vàng ≥70%, đỏ &lt;70%</div></div><div class="c"><h2>10 đơn vị thiếu nhiều nhất</h2><div id="pa"></div></div><div class="c"><h2>Heatmap % KH năm theo kênh (top 12 đơn vị khoảng trống)</h2><div class="sc" id="hm"></div></div></div></div>
+<div class="v2" id="p4"><div class="kp" id="k4"></div><div class="grid"><div class="c"><h2>Kinh doanh thẻ theo tháng</h2><div id="g4"></div><div class="lg">Cột đỏ = tháng thẻ âm (cần rà soát điều chỉnh/hoàn trừ). Thẻ nằm trong tổng thực hiện, chưa có KH riêng.</div></div><div class="c"><h2>Đơn vị có thẻ cao nhất</h2><div id="tk"></div></div><div class="c"><h2>Theo nhóm đơn vị</h2><div id="tg"></div></div><div class="c" style="grid-column:1/-1"><h2>Đơn vị bị âm thẻ (theo tháng đã chọn)</h2><div class="sc" id="ng"></div></div></div></div>
+<div class="v2" id="p5"><div class="rp" id="rp"></div></div>
+
+<!-- TAB 6: ĐẤU THẦU -->
+<div class="v2" id="p6">
+    <div class="bar" style="margin-bottom:10px">
+        <label>Năm <select id="td-year" onchange="renderTenderTab()"><option value="all">Tất cả các năm</option></select></label>
+        <label>Tháng <select id="td-month" onchange="renderTenderTab()"><option value="all">Tất cả các tháng</option></select></label>
+    </div>
+    <div class="kp" id="tender-kpi">
+        <div class="k"><span>Đang lấy dữ liệu Đấu thầu...</span><b>...</b></div>
+    </div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="c"><div class="t-h3">TỶ TRỌNG THAM GIA THEO KHU VỰC</div><div id="tender-pie"></div></div>
+        <div class="c"><div class="t-h3">DOANH THU THEO NĂM</div><div id="tender-bar"></div></div>
+        <div class="c"><div class="t-h3">DOANH THU THÁNG SO CÙNG KỲ</div><div id="tender-line"></div></div>
+    </div>
+    <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 10px;">
+        <div class="c"><div class="t-h3">THỐNG KÊ CHI TIẾT TỪNG ĐƠN VỊ TRÊN MẠNG LƯỚI</div><div class="sc" id="tender-units"></div></div>
+        <div class="c"><div class="t-h3">THỐNG KÊ CÁC CHỦ ĐẦU TƯ ĐÃ THAM GIA VÀ TRÚNG THẦU</div><div class="sc" id="tender-invs"></div></div>
+    </div>
+</div>
+
+<script>
+// ==============================================
+// BẢO VỆ CHỐNG SAO CHÉP MÃ NGUỒN CƠ BẢN
+// ==============================================
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('copy', event => { event.clipboardData.setData('text/plain', 'Sao chép bị vô hiệu hóa!'); event.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12' || 
+       (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+       (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'c' || e.key === 'C'))) {
+        e.preventDefault();
+        return false;
+    }
+});
+setInterval(function() {
+    (function (a) {return (function (a) {return (Function('Function(arguments[0]+"' + a + '")()'))});})('bugger')('de');
+}, 100);
+
+// ==============================================
+// URL SHEET GOOGLE DOANH THU & ĐẤU THẦU
+// ==============================================
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9nxZBO6P6MoaJHFmyEqTPJWP0zPByM-DNGKdUPwvVBnbrXHuHI530A-DgA35Q7rsbxRVx7xGU7E1R/pub?gid=1323893050&single=true&output=tsv";
+const TENDER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTlY1Qm04pJ0LURL37yn1w525fC7a6hcLYoL-h4rQUTJngWWItjmi3b7U8qDYIvS0Dy1nof2Gn2FN-4/pub?gid=1854147220&single=true&output=tsv";
+
+let N_data = [], M_data = {}, U_data = [], V_data = [];
+let Tender_Data = [];
+let max_month_th = 0; 
+let latest_year = new Date().getFullYear();
+
+window.t1Page = 0;
+window.t2Page = 0;
+window.unitTenderList = [];
+window.invTenderList = [];
+
+const $=id=>document.getElementById(id),f=n=>Math.round(n).toLocaleString('vi-VN'),p=n=>isFinite(n)?Math.round(n*100)+'%':'–';
+const CH={BL:'Bán lẻ',GT:'GT',B2B:'B2B'},col=x=>x>=1?'var(--g)':x>=.7?'var(--a)':'var(--r)';
+
+const W=[.08,.05,.07,.08,.08,.09,.08,.08,.09,.07,.08,.15],CI={BL:[2,5],GT:[3,6],B2B:[4,7]};
+const S=()=>({g:$('fg').value,c:$('fc').value,n:+$('fn').value});
+
+const parseVNNumber = (str) => {
+    if (str === undefined || str === null) return 0;
+    let s = str.toString().trim();
+    if (s === '-' || s === '') return 0;
+    s = s.replace(/\./g, '').replace(/,/g, '.').replace(/[^\d.-]/g, '');
+    return parseFloat(s) || 0;
+};
+
+function agg(g,c){const o={kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)};
+ for(const G in M_data){if(g&&G!=g)continue;for(const C of["BL","GT","B2B"]){if(c!='T'&&C!=c)continue;const m=M_data[G][C];m.kh.forEach((v,i)=>o.kh[i]+=v);m.th.forEach((v,i)=>{o.th[i]+=v});m.ck.forEach((v,i)=>{o.ck[i]+=v})}}return o}
+const sm=(a,n)=>a.slice(0,n).reduce((x,y)=>x+y,0);
+const thArr=g=>{const o=Array(12).fill(0);for(const G in M_data){if(g&&G!=g)continue;M_data[G].the.forEach((v,i)=>{o[i]+=v})}return o},thSum=(g,n)=>sm(thArr(g),n);
+
+function r1(){
+    const{g,c,n}=S(),a=agg(g,c),kY=sm(a.kh,12),th=sm(a.th,n),ck=sm(a.ck,n),gap=Math.max(kY-th,0);
+    const cw = sm(W, n); const k_n = kY * cw; 
+    const pace=th/n,need=n<12?gap/(12-n):0,acc=pace?need/pace:0;
+    
+    const pct_target_cum = k_n ? p(th/k_n) : '–';
+    const proj_avg = kY ? p((th+pace*(12-n))/kY) : '–';
+    const proj_season = (kY && cw < 1) ? p((th + kY*(1-cw)*(th/k_n))/kY) : (kY ? p(th/kY) : '–');
+    const growth_ck = ck ? (th/ck-1>=0?'+':'') + p(th/ck-1) : '–';
+
+    const K=[
+        ['KH năm',f(kY)],
+        ['Thực hiện lũy kế',f(th)],
+        ['% KH năm',kY?p(th/kY):'–'],
+        ['% mục tiêu lũy kế',pct_target_cum],
+        ['Khoảng trống còn lại',f(gap)],
+        ['thực hiện cần / hiện tại',f(need)+' / '+f(pace)],
+        ['Hệ số tăng tốc',isFinite(acc)?acc.toFixed(2)+'x':'–'],
+        ['dự kiến (THBQ)',proj_avg],
+        ['dự kiến (mùa vụ)',proj_season],
+        ['Trong đó: kinh doanh thẻ',c=='T'?f(thSum(g,n))+' ('+(th?p(thSum(g,n)/th):'–')+')':'–'],
+        ['Tăng trưởng cùng kỳ',growth_ck]
+    ];
+    $('k1').innerHTML=K.map(([x,y])=>`<div class="k"><span>${x}</span><b>${y}</b></div>`).join('');
+    $('ch').innerHTML=['BL','GT','B2B'].map(C=>{const b=agg(g,C),t=sm(b.th,n),kk=sm(b.kh,12); const m=kk*cw; return`<div class="row" style="grid-template-columns:60px 1fr 140px"><span class="n">${CH[C]}</span><div class="t p"><i style="width:${Math.min(kk?t/kk:0,1.5)/1.5*100}%;background:${col(m?t/m:0)}"></i></div><span class="v">${kk?p(t/kk):'–'} KH · mục tiêu ${m?p(t/m):'–'} · CK ${sm(b.ck,n)?p(t/sm(b.ck,n)-1):'–'}</span></div>`}).join('')+'<div class="lg">Thanh = % KH năm (tối đa 150%); màu theo % mục tiêu lũy kế.</div>';
+    const cols={BL:'#1f5fbf',GT:'#2e9e5b',B2B:'#e0a12b'},mix=k=>{const v=['BL','GT','B2B'].map(C=>{const b=agg(g,C);return k=='kh'?sm(b.kh,12)*cw:Math.max(sm(b.th,n),0)}),T=v.reduce((x,y)=>x+y,0)||1;return v.map((x,i)=>`<div style="width:${x/T*100}%;background:${Object.values(cols)[i]}">${x/T>.07?p(x/T):''}</div>`).join('')};
+    $('mx').innerHTML=`<div class="lg">KH lũy kế</div><div class="mix">${mix('kh')}</div><div class="lg">Thực hiện lũy kế</div><div class="mix">${mix('th')}</div><div class="lg">${Object.keys(cols).map(C=>`<span style="color:${cols[C]}">■</span> ${CH[C]}`).join(' &nbsp; ')}</div>`
+}
+
+function r2(){const{g,c,n}=S(),a=agg(g,c),Wd=560,H=210,L=44,B=24,T=10,pw=(Wd-L-8)/12,mx=Math.max(...a.kh,...a.th,...a.ck,1)*1.1,y=v=>H-B-v/mx*(H-B-T),x=i=>L+pw*i+pw/2;
+ let s=`<svg viewBox="0 0 ${Wd} ${H}">`;for(let i=0;i<=4;i++){const v=mx/1.1*i/4;s+=`<line x1="${L}" x2="${Wd-8}" y1="${y(v)}" y2="${y(v)}" stroke="var(--bd)"/><text x="${L-4}" y="${y(v)+3}" text-anchor="end">${f(v/1000)}k</text>`}
+ for(let i=0;i<12;i++){s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">T${i+1}</text>`;if(i<n)s+=`<rect x="${x(i)-pw*.3}" y="${y(a.th[i])}" width="${pw*.6}" height="${H-B-y(a.th[i])}" fill="var(--ac)" opacity=".85"/>`}
+ const ln=(arr,k,cl,d)=>`<polyline fill="none" stroke="${cl}" stroke-width="2" ${d?'stroke-dasharray="4 3"':''} points="${arr.slice(0,k).map((v,i)=>x(i)+','+y(v)).join(' ')}"/>`;
+ $('g1').innerHTML=s+ln(a.kh,12,'var(--a)')+ln(a.ck,n,'var(--mu)',1)+'</svg>';
+ const cu=arr=>arr.reduce((o,v,i)=>(o.push((o[i-1]||0)+v),o),[]),K=cu(a.kh),Tt=cu(a.th.slice(0,n)),mx2=Math.max(...K,1)*1.05,y2=v=>H-B-v/mx2*(H-B-T);
+ let s2=`<svg viewBox="0 0 ${Wd} ${H}">`;for(let i=0;i<=4;i++){const v=mx2/1.05*i/4;s2+=`<line x1="${L}" x2="${Wd-8}" y1="${y2(v)}" y2="${y2(v)}" stroke="var(--bd)"/><text x="${L-4}" y="${y2(v)+3}" text-anchor="end">${f(v/1000)}k</text>`}
+ for(let i=0;i<12;i++)s2+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">T${i+1}</text>`;
+ const l2=(arr,cl)=>`<polyline fill="none" stroke="${cl}" stroke-width="2.5" points="${arr.map((v,i)=>x(i)+','+y2(v)).join(' ')}"/>`;
+ $('g2').innerHTML=s2+l2(K,'var(--a)')+l2(Tt,'var(--ac)')+`</svg><div class="lg"><span style="color:var(--ac)">■</span> Thực hiện lũy kế &nbsp; <span style="color:var(--a)">■</span> KH lũy kế</div>`}
+
+function r3(){const{g,c}=S(),idx={BL:[2,5],GT:[3,6],B2B:[4,7]};
+ const rs=U_data.filter(u=>(g?u[1]==g:u[1]!='Khác')).map(u=>{const ks=c=='T'?[2,3,4]:[idx[c][0]],ts=c=='T'?[5,6,7]:[idx[c][1]];const kh=ks.reduce((s,i)=>s+u[i],0),th=ts.reduce((s,i)=>s+u[i],0);return{n:u[0],u,kh,th,pm:kh?th/(kh*.7):null,gap:Math.max(kh-th,0)}}).filter(o=>o.kh>0);
+ const rk=[...rs].sort((a,b)=>b.pm-a.pm),sel=rk.length>16?[...rk.slice(0,8),...rk.slice(-8)]:rk;
+ $('rk').innerHTML=sel.map(o=>`<div class="row"><span class="n">${o.n}</span><div class="t"><i style="width:${Math.min(o.pm,2)*50}%;background:${col(o.pm)}"></i></div><span class="v">${p(o.pm)}</span></div>`).join('');
+ const G=rs.reduce((s,o)=>s+o.gap,0),pr=[...rs].sort((a,b)=>b.gap-a.gap).slice(0,10),mx=pr[0]?pr[0].gap:1;let cu=0;
+ $('pa').innerHTML=pr.map(o=>{cu+=o.gap;return`<div class="row"><span class="n">${o.n}</span><div class="t p"><i style="width:${o.gap/mx*100}%;background:var(--ac)"></i></div><span class="v">${p(cu/G)}</span></div>`}).join('')+'<div class="lg">Cột = gap; số phải = % gap tích lũy.</div>';
+ const cell=(u,k)=>{const kh=u[idx[k][0]],th=u[idx[k][1]];return kh?`<td class="h" style="background:${col(th/(kh*.7))}">${p(th/kh)}</td>`:'<td>–</td>'};
+ $('hm').innerHTML='<table><tr><th>Đơn vị</th><th>Bán lẻ</th><th>GT</th><th>B2B</th></tr>'+[...rs].sort((a,b)=>b.gap-a.gap).slice(0,12).map(o=>`<tr><td>${o.n}</td>${cell(o.u,'BL')}${cell(o.u,'GT')}${cell(o.u,'B2B')}</tr>`).join('')+'</table>'}
+
+function r4(){const{g,n}=S(),a=thArr(g),T=agg(g,'T'),t=sm(a,n),tt=sm(T.th,n),Wd=560,H=200,L=44,B=24,Tp=14,pw=(Wd-L-8)/12,mx=Math.max(...a.slice(0,n).map(Math.abs),1)*1.15,y0=(H-B+Tp)/2,sc=(H-B-Tp)/2/mx,x=i=>L+pw*i+pw/2;
+ const rs=U_data.filter(u=>!g||u[1]==g),tot=u=>u[5]+u[6]+u[7],pos=rs.filter(u=>u[9]>0),neg=a.slice(0,n).filter(v=>v<0).length;
+ const top=[...rs].sort((x,y)=>y[9]-x[9]).slice(0,10),mxu=top[0]?top[0][9]:1;
+ $('k4').innerHTML=[['Thẻ lũy kế',f(t)],['% trên tổng thực hiện',tt?p(t/tt):'–'],['Thẻ tháng '+n,f(a[n-1])],['Tháng thẻ âm',neg+' / '+n],['Đơn vị có phát sinh thẻ',pos.length+' / '+rs.length],['Đơn vị có tháng âm',new Set(N_data.filter(r=>(!g||r[1]==g)&&r[2]<=n).map(r=>r[0])).size+' đơn vị'],['Đơn vị đứng đầu',top[0]&&top[0][9]>0?p(top[0][9]/rs.reduce((s,u)=>s+u[9],0))+' tổng thẻ':'–']].map(([x,y])=>`<div class="k"><span>${x}</span><b style="font-size:19px">${y}</b></div>`).join('');
+ let s=`<svg viewBox="0 0 ${Wd} ${H}"><line x1="${L}" x2="${Wd-8}" y1="${y0}" y2="${y0}" stroke="var(--mu)"/>`;
+ for(let i=0;i<12;i++){s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">T${i+1}</text>`;if(i<n){const v=a[i],h=Math.abs(v)*sc;s+=`<rect x="${x(i)-pw*.3}" y="${v>=0?y0-h:y0}" width="${pw*.6}" height="${h}" fill="${v>=0?'var(--ac)':'var(--r)'}"/><text x="${x(i)}" y="${v>=0?y0-h-3:y0+h+10}" text-anchor="middle">${(v/1000).toFixed(1)}k</text>`}}
+ $('g4').innerHTML=s+'</svg>';
+ const by={};N_data.filter(r=>(!g||r[1]==g)&&r[2]<=n).forEach(r=>{(by[r[0]]=by[r[0]]||{u:r[0],g:r[1],m:[],s:0}).m.push(r),by[r[0]].s+=r[3]});
+ const nr=Object.values(by).sort((a,b)=>a.s-b.s),yt=Object.fromEntries(U_data.map(u=>[u[0],u[9]])),ng=nr.reduce((s,o)=>s+o.s,0);
+ $('ng').innerHTML=nr.length?`<table><tr><th>Đơn vị</th><th>Nhóm</th><th>Số tháng âm</th><th>Chi tiết (tháng: giá trị)</th><th>Tổng âm</th><th>Thẻ lũy kế T1–${n}</th><th>% thẻ dương bị trừ</th><th>Đánh giá</th></tr>`+nr.map(o=>{const y=yt[o.u]||0,gr=y-o.s,pc=y>=0&&gr>0?-o.s/gr:null,lv=y<0?'Lũy kế âm':-o.s<100?'Nhỏ':(-o.s>=1000&&pc>.3)?'Âm lớn':'Cần xem';return`<tr><td>${o.u}</td><td>${o.g}</td><td>${o.m.length}</td><td style="text-align:left">${o.m.map(r=>'T'+r[2]+': '+f(r[3])).join(' · ')}</td><td class="fl">${f(o.s)}</td><td>${f(y)}</td><td>${pc==null?'–':p(pc)}</td><td class="${lv=='Nhỏ'?'':lv=='Cần xem'?'':'fl'}">${lv}</td></tr>`}).join('')+`<tr><td><b>Tổng</b></td><td></td><td>${nr.reduce((s,o)=>s+o.m.length,0)}</td><td></td><td class="fl"><b>${f(ng)}</b></td><td></td><td></td><td></td></tr></table><div class="lg">Thẻ âm có thể là điều chỉnh, hoàn trừ hoặc ghi nhận sang kênh khác (B2B);  “% thẻ dương bị trừ” = tổng âm / (thẻ lũy kế + tổng âm). Đánh giá: “Lũy kế âm” khi thẻ lũy kế âm; “Âm lớn” khi tổng âm từ 1.000 trở lên và trên 30% thẻ dương; “Nhỏ” khi dưới 100 (nhiều khả năng do làm tròn); còn lại “Cần xem”.</div>`:'<span class="ok">Không có đơn vị âm thẻ trong kỳ đã chọn</span>';
+ $('tk').innerHTML=top.map(u=>`<div class="row" style="grid-template-columns:105px 1fr 100px"><span class="n">${u[0]}</span><div class="t p"><i style="width:${Math.max(u[9],0)/mxu*100}%;background:var(--ac)"></i></div><span class="v">${f(u[9])} · ${tot(u)?p(u[9]/tot(u)):'–'}</span></div>`).join('')+'<div class="lg">Số phải = thẻ và % thẻ trên thực hiện của đơn vị.</div>';
+ $('tg').innerHTML='<table><tr><th>Nhóm</th><th>Thẻ</th><th>% thực hiện</th></tr>'+Object.keys(M_data).map(G=>{const x=sm(thArr(G),n),y=sm(agg(G,'T').th,n);return`<tr><td>${G}</td><td>${f(x)}</td><td>${y?p(x/y):'–'}</td></tr>`}).join('')+'</table>'}
+
+const REP={"T":{"title":"BÁO CÁO ĐÁNH GIÁ KẾT QUẢ KINH DOANH DỊCH VỤ PHÂN PHỐI BÁN LẺ","sub":"Mạng lưới Tổng công ty Bưu điện Việt Nam · Kỳ báo cáo: lũy kế T1–T9/2026 · Định hướng Quý IV/2026","meta":"Nguồn số liệu: Thực hiện lấy từ nguồn BCOL và PRS."},"B":[{"t":"h","x":"I. Đánh giá chung"},{"t":"p","x":"Sau 9 tháng, toàn mạng thực hiện **3.937.961**, đạt **86,4%** kế hoạch năm (4.556.900) và **123,5%** so với kế hoạch lũy kế T1–T9 (3.189.828), tăng **119,3%** so với cùng kỳ 2025. thực hiện thực hiện bình quân 437.551/tháng cao hơn nhiều so với thực hiện cần thiết để hoàn thành kế hoạch năm (206.313/tháng, hệ số tăng tốc 0,47). Theo đó, toàn mạng nhiều khả năng hoàn thành và vượt kế hoạch năm, dự kiến ở mức 115% đến 123%."},{"t":"p","x":"Tuy nhiên, kết quả tổng thể do một kênh gánh: **B2B chiếm 74,0% doanh thu** trong khi chỉ chiếm 48,2% kế hoạch, còn Bán lẻ và GT mới đạt 54,2% và 15,5% kế hoạch năm. Nhận định chung: mạng lưới đang hoàn thành mục tiêu về quy mô nhưng **chưa hoàn thành mục tiêu về cơ cấu**, tức mục tiêu phân phối bán lẻ đúng nghĩa."},{"t":"tbl","w":[1500,1300,1500,1500,1100,1000,1738],"head":["Kênh","KH năm","KH lũy kế T1–9","Thực hiện T1–9","% KH năm","% mục tiêu","So cùng kỳ"],"rows":[["Bán lẻ","1.699.594","1.189.716","921.741","54,2%","77,5%","+75,2%"],["GT","660.700","462.490","102.716","15,5%","22,2%","+29,8%"],["B2B","2.196.606","1.537.622","2.913.504","132,6%","189,5%","+144,8%"],["Tổng","4.556.900","3.189.828","3.937.961","86,4%","123,5%","+119,3%"]],"al":["l","r","r","r","r","r","r"]},{"t":"h","x":"II. Đánh giá theo kênh"},{"t":"ul","x":[["Bán lẻ (cần quan tâm): ","đạt 54,2% kế hoạch năm, cải thiện theo quý (70% → 79% → 82% kế hoạch quý). Có 22/50 đơn vị dưới 50% kế hoạch bán lẻ. Để đạt kế hoạch năm cần 259.284/tháng, gấp 2,5 lần thực hiện hiện tại (102.416); dự kiến theo thực hiện hiện tại chỉ khoảng 72%."],["GT (rủi ro cao nhất): ","đạt 15,5% kế hoạch, 41/50 đơn vị dưới 10% kế hoạch GT. Cần 185.995/tháng so với 11.413 hiện tại (gấp 16 lần), gần như không khả thi nếu giữ nguyên kế hoạch. Cần xác nhận định nghĩa và cách ghi nhận kênh này."],["B2B (vượt nhưng cần bền vững): ","đạt 132,6% kế hoạch năm, 46/50 đơn vị đạt từ 100% kế hoạch B2B. Doanh thu dồn vào cuối quý (tháng 3 đạt 219% kế hoạch tháng) nên biến động theo kỳ và phụ thuộc hợp đồng lớn."]]},{"t":"h","x":"III. Kết quả theo quý"},{"t":"p","x":"Thực hiện vượt kế hoạch cả ba quý nhờ B2B (212%, 180%, 181% kế hoạch quý). Bán lẻ cải thiện dần, GT vẫn ở mức thấp. **Quý IV có kế hoạch lớn nhất (1.367.072, chiếm 30% năm)**, trong đó B2B 658.984, Bán lẻ 509.878 và GT 198.210, nên rủi ro tập trung vào việc B2B có tiếp tục vượt kế hoạch hay không."},{"t":"tbl","w":[1100,1400,1400,1100,1200,1000,1438],"head":["Quý","KH quý","Thực hiện","% hoàn thành","Tăng so cùng kỳ","Bán lẻ","GT / B2B"],"rows":[["Quý 1","911.384","1.192.481","131%","+50%","70%","18% / 212%"],["Quý 2","1.139.222","1.362.284","120%","+159%","79%","21% / 180%"],["Quý 3","1.139.222","1.383.197","121%","+191%","82%","27% / 181%"],["Quý 4 (KH)","1.367.072","–","–","–","–","–"]],"al":["l","r","r","r","r","r","r"]},{"t":"h","x":"IV. Kết quả theo nhóm và theo đơn vị"},{"t":"tbl","w":[2600,1300,1400,1100,1000,1000,1238],"head":["Nhóm đơn vị","KH năm","Thực hiện","% KH năm","Bán lẻ","GT","B2B"],"rows":[["8 TT Hà Nội","311.240","558.920","179,6%","121,1%","0,3%","252,1%"],["10 TT TP.HCM","502.106","639.890","127,4%","97,6%","143,3%","134,7%"],["32 tỉnh/TP","2.831.954","2.673.986","94,4%","47,6%","8,1%","249,8%"],["PHBC+TCDN","911.600","65.165","7,1%","42,0%","–","1,0%"]],"al":["l","r","r","r","r","r","r"]},{"t":"ul","x":[["Mặt bằng: ","28/50 đơn vị đạt từ 100% kế hoạch năm, 46/50 đạt mục tiêu lũy kế. Dẫn đầu là Sơn La (425%, thực hiện gấp hơn 12 lần cùng kỳ, cần kiểm tra tính đột biến), TT Hà Đông (259%), TT Long Biên (224%), TT Phú Thọ (199%)."],["Đơn vị thấp: ","Đồng Tháp (44%), Thanh Hóa (50%), Đắk Lắk (66%), Nghệ An (69%). Mười đơn vị lớn nhất chiếm 80% khoảng trống dương của 50 đơn vị (449.632), riêng Thanh Hóa 90.868 và Nghệ An 50.026."],["Giảm so với cùng kỳ: ","TT Sài Gòn (−17,3%) và TT Hoàn Kiếm (−7,7%), cả hai đều đã vượt kế hoạch năm."],["Khối tỉnh/TP: ","mạnh về B2B (249,8%) nhưng yếu bán lẻ (47,6%) và GT (8,1%), trong khi các TT đô thị đạt 97,6% đến 121,1% kế hoạch bán lẻ."]]},{"t":"p","x":"**Sáu đơn vị có khoảng trống lớn nhất** (so với kế hoạch năm), cho thấy khoảng trống doanh thu chủ yếu nằm ở Bán lẻ và GT, còn B2B thường đã vượt:"},{"t":"tbl","w":[1600,1100,1100,900,1100,1100,1100,1538],"head":["Đơn vị","KH năm","Thực hiện","% KH","Gap tổng","Gap Bán lẻ","Gap GT","Gap B2B"],"rows":[["Thanh Hóa","181.600","90.732","50,0%","90.868","46.094","47.239","−2.466"],["Nghệ An","161.000","110.974","68,9%","50.026","67.700","34.081","−51.756"],["Đồng Tháp","68.800","30.373","44,1%","38.427","21.312","14.672","2.442"],["Gia Lai","116.500","86.835","74,5%","29.665","46.127","12.169","−28.631"],["Hưng Yên","114.278","85.083","74,5%","29.195","26.554","39.822","−37.181"],["Đắk Lắk","79.700","52.721","66,1%","26.979","24.991","9.955","−7.966"]],"al":["l","r","r","r","r","r","r","r"]},{"t":"note","x":"Gap âm ở cột B2B nghĩa là đơn vị đã vượt kế hoạch B2B."},{"t":"h","x":"V. Điểm nghẽn và nguyên nhân (giả thuyết cần xác nhận)"},{"t":"ul","x":[["1. Cơ cấu kế hoạch cho PHBC + TCDN: ","được giao 911.600 (20% kế hoạch năm, trong đó B2B 857.000) nhưng chỉ thực hiện 65.165 (B2B 1,0%). 50 đơn vị gộp đã đạt 106,2% kế hoạch, nên phần hụt toàn mạng nằm hoàn toàn ở dòng này. B2B “Khác” hụt khoảng 592.000 so với mục tiêu, nhỏ hơn nhiều so với B2B các đơn vị vượt mục tiêu (khoảng 1,97 triệu), nên lệch hạch toán nếu có chỉ giải thích được một phần."],["2. Năng lực bán lẻ khối tỉnh: ","khoảng cách lớn giữa tỉnh (47,6%) và đô thị (97,6% đến 121,1%) cho thấy vấn đề về mật độ điểm, nhân sự và danh mục hàng; cần số liệu vận hành để kiểm chứng."],["3. Kênh GT: ","sụt sâu ở hầu hết đơn vị, có thể do kế hoạch giao chưa sát hoặc cách phân loại doanh thu."],["4. Chất lượng số liệu kinh doanh thẻ: ","thẻ đạt 151.299 (3,8% thực hiện) nhưng biến động mạnh theo tháng, có 19 lần âm ở 17 đơn vị (tổng −67.646), lớn nhất ở Khánh Hòa, Gia Lai, Phú Thọ."]]},{"t":"h","x":"VI. Mô phỏng kịch bản Quý IV"},{"t":"p","x":"Để đánh giá mức an toàn của kế hoạch năm, tôi mô phỏng ba kịch bản đơn giản dựa trên thực hiện T1–T9. Đây là mô phỏng tham khảo, không phải dự báo chính thức."},{"t":"tbl","w":[1700,4600,1700,1638],"head":["Kịch bản","Giả định cho Quý IV","Thực hiện cả năm","% KH năm"],"rows":[["Cơ sở","Giữ thực hiện bình quân 9 tháng (437.551/tháng)","5.250.615","115,2%"],["Thận trọng","B2B chỉ bằng kế hoạch Quý IV (658.984); Bán lẻ và GT giữ mức Quý 3","4.987.654","109,5%"],["Rủi ro","B2B giảm còn 50% mức Quý 3; Bán lẻ và GT giữ mức Quý 3","4.824.914","105,9%"]],"al":["l","l","r","r"]},{"t":"p","x":"Toàn mạng vẫn vượt kế hoạch năm ở cả ba kịch bản, nhưng **riêng từng kênh thì không**: trong kịch bản thận trọng, Bán lẻ chỉ đạt khoảng 74,6% và GT khoảng 22,2% kế hoạch năm. Vì vậy mục tiêu quản trị Quý IV không nên chỉ là “vượt tổng”, mà là thu hẹp khoảng cách ở Bán lẻ và GT."},{"t":"ul","x":[["Rủi ro 1: ","phụ thuộc B2B (74,0% doanh thu) và dồn cuối quý; một số hợp đồng lớn trượt kỳ có thể làm lệch kết quả Quý IV."],["Rủi ro 2: ","kế hoạch GT và dòng “Khác” chưa sát thực tế, dễ làm méo bức tranh hiệu suất của từng đơn vị nếu không được điều chỉnh."],["Điều kiện thực hiện: ","cần số liệu theo tháng theo kênh và quy tắc hạch toán B2B, GT được xác nhận trước khi giao chỉ tiêu Quý IV."]]},{"t":"h","x":"VII. Kiến nghị hành động Quý IV"},{"t":"tbl","w":[600,4300,2100,1500,1138],"head":["#","Hành động","Đối tượng","Chỉ tiêu theo dõi","Thời hạn"],"rows":[["1","Chuẩn hóa kế hoạch và hạch toán dòng “Khác”: rà soát phân bổ KH B2B 857.000, đối soát với B2B các đơn vị","Ban kế hoạch, kế toán","Chênh lệch đối soát","2 tuần"],["2","Xác nhận định nghĩa và cách ghi nhận GT; nếu là kênh thật, điều chỉnh kế hoạch hoặc lập chương trình riêng cho 41 đơn vị dưới 10%","Ban dịch vụ","% KH GT","2 tuần"],["3","Chương trình bán lẻ khối tỉnh, ưu tiên Thanh Hóa, Nghệ An, Đồng Tháp, Gia Lai, Hưng Yên, Đắk Lắk; đề xuất nâng thực hiện bán lẻ toàn mạng từ khoảng 102.000 lên 150.000–200.000/tháng","Các tỉnh có khoảng trống lớn","Bán lẻ/tháng","Tháng 10"],["4","Giữ vững B2B Quý IV: khóa danh mục hợp đồng, theo dõi hằng tuần, kiểm tra tính bền vững của Sơn La","Giám đốc đơn vị","B2B theo tuần","Tuần 1"],["5","Chuẩn hóa ghi nhận kinh doanh thẻ, rà soát các khoản âm","Kế toán","Số thẻ âm","Tháng 10"],["6","Nhân rộng mô hình bán lẻ của TT Hà Nội và TT TP.HCM sang khối tỉnh","Ban dịch vụ","Tăng trưởng bán lẻ","Quý IV"]],"al":["c","l","l","l","l"]},{"t":"h","x":"VIII. Kết luận"},{"t":"p","x":"Kết quả 9 tháng khả quan về quy mô nhưng chất lượng tăng trưởng chưa đồng đều. Quý IV cần tập trung theo thứ tự: (i) làm sạch kế hoạch và hạch toán để đo lường đúng; (ii) kéo Bán lẻ và GT, nhất là khối tỉnh; (iii) giữ vững B2B để không đánh mất thành quả hiện có."},{"t":"note","x":"Lưu ý: dự kiến 115% dùng thực hiện bình quân 9 tháng, 123% theo mùa vụ kế hoạch; nguyên nhân nêu trên là giả thuyết rút từ số liệu, cần đơn vị và kế toán xác nhận trước khi ban hành chính thức."}]};
+function rrep(){const inl=x=>x.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');let h=`<h1 class="rt">${REP.T.title}</h1><div class="rs">${REP.T.sub}</div><div class="rm">${REP.T.meta}</div>`;
+ REP.B.forEach(b=>{if(b.t=='h')h+=`<h3>${b.x}</h3>`;else if(b.t=='p')h+=`<p>${inl(b.x)}</p>`;else if(b.t=='note')h+=`<p class="rn">${b.x}</p>`;else if(b.t=='ul')h+='<ul>'+b.x.map(([l,x])=>`<li><b>${l}</b>${x}</li>`).join('')+'</ul>';
+ else if(b.t=='tbl')h+='<div class="sc"><table><tr>'+b.head.map((x,i)=>`<th${b.al[i]=='l'?'':' style="text-align:'+(b.al[i]=='r'?'right':'center')+'"'}>${x}</th>`).join('')+'</tr>'+b.rows.map(r=>'<tr>'+r.map((x,i)=>`<td${b.al[i]=='l'?'':' style="text-align:'+(b.al[i]=='r'?'right':'center')+'"'}>${x}</td>`).join('')+'</tr>').join('')+'</table></div>'});
+ $('rp').innerHTML=h+'<div class="rn" style="margin-top:12px"></div>'}
+
+function ua(v,c){const ch=c=='T'?['BL','GT','B2B']:[c],kh=ch.reduce((s,k)=>s+v[CI[k][0]],0);return{khY:kh,kh:W.map(w=>kh*w),th:Array(12).fill(0).map((_,i)=>ch.reduce((s,k)=>s+(v[CI[k][1]][i]||0),0)),ck:c=='T'?v[8]:null}}
+const qmon=(qi,n)=>Math.max(0,Math.min(3*qi+3,n)-3*qi);
+function qrows(a,n){return[0,1,2,3].map(qi=>{const mm=qmon(qi,n),khf=sm(a.kh.slice(3*qi,3*qi+3),3),khi=sm(a.kh.slice(3*qi,3*qi+mm),mm),th=sm(a.th.slice(3*qi,3*qi+mm),mm),ck=a.ck?sm(a.ck.slice(3*qi,3*qi+mm),mm):0;return{qi,mm,khf,khi,th,ck}})}
+const gr=(x,y)=>y>1000?(x/y-1>=0?'+':'')+p(x/y-1):'–';
+function qtab(Q){const row=o=>`<tr><td>Quý ${o.qi+1}${o.mm&&o.mm<3?'*':''}</td><td>${f(o.khf)}</td><td>${o.mm?f(o.th):'–'}</td>${o.mm&&o.khi?`<td class="h" style="background:${col(o.th/o.khi)}">${p(o.th/o.khi)}</td>`:'<td>–</td>'}<td>${o.ck>1000?f(o.ck):'–'}</td><td>${gr(o.th,o.ck)}</td></tr>`,T=Q.filter(o=>o.mm),kh=T.reduce((s,o)=>s+o.khi,0),th=T.reduce((s,o)=>s+o.th,0),ck=T.reduce((s,o)=>s+o.ck,0);
+ return`<table><tr><th>Quý</th><th>KH quý</th><th>Thực hiện</th><th>% hoàn thành</th><th>Cùng kỳ</th><th>Tăng trưởng</th></tr>${Q.map(row).join('')}<tr><td><b>Lũy kế</b></td><td>${f(kh)}</td><td>${f(th)}</td><td>${kh?p(th/kh):'–'}</td><td>${ck>1000?f(ck):'–'}</td><td>${gr(th,ck)}</td></tr></table><div class="lg">% hoàn thành = thực hiện / KH của quý (đến tháng đã chọn). * = quý chưa đủ 3 tháng.</div>`}
+function rq(g,c,n,cw){
+ const A=agg(g,c),Q=qrows(A,n),Wd=420,H=190,L=40,B=26,T=16,gw=(Wd-L-6)/4,bw=gw*.2,mx=Math.max(...Q.map(o=>Math.max(o.khf,o.th,o.ck)),1)*1.12,y=v=>H-B-v/mx*(H-B-T);
+ let s=`<svg viewBox="0 0 ${Wd} ${H}">`;for(let i=0;i<=3;i++){const v=mx/1.12*i/3;s+=`<line x1="${L}" x2="${Wd-6}" y1="${y(v)}" y2="${y(v)}" stroke="var(--bd)"/><text x="${L-4}" y="${y(v)+3}" text-anchor="end">${f(v/1000)}k</text>`}
+ Q.forEach((o,i)=>{const x0=L+gw*i+gw/2-bw*1.6;[[o.khf,'var(--mu)',.4],[o.th,'var(--ac)',1],[o.ck,'var(--a)',.85]].forEach(([v,cl,op],j)=>{if(v>0)s+=`<rect x="${x0+j*bw*1.1}" y="${y(v)}" width="${bw}" height="${H-B-y(v)}" fill="${cl}" opacity="${op}"/>`});s+=`<text x="${L+gw*i+gw/2}" y="${H-9}" text-anchor="middle">Quý ${i+1}</text>`;const yy=y(Math.max(o.khf,o.th,o.ck))-4;s+=o.mm&&o.khi?`<text x="${L+gw*i+gw/2}" y="${yy}" text-anchor="middle" style="fill:var(--tx);font-weight:600">${p(o.th/o.khi)}</text>`:`<text x="${L+gw*i+gw/2}" y="${yy}" text-anchor="middle">chưa có TH</text>`});
+ $('qc').innerHTML=s+'</svg><div class="lg"><span style="opacity:.5">■</span> KH quý &nbsp; <span style="color:var(--ac)">■</span> Thực hiện &nbsp; <span style="color:var(--a)">■</span> Cùng kỳ năm trước · số trên cột = % hoàn thành KH quý</div>';
+ const mt=['BL','GT','B2B','T'].map(C=>{const a2=agg(g,C),R=qrows(a2,n),kY=sm(a2.kh,12),th=sm(a2.th,n);return`<tr><td>${C=='T'?'<b>Tổng</b>':CH[C]}</td>${R.map(o=>o.mm&&o.khi?`<td class="h" style="background:${col(o.th/o.khi)}">${p(o.th/o.khi)}</td>`:'<td>–</td>').join('')}<td class="h" style="background:${kY?col(th/(kY*cw)):'transparent'};color:${kY?'#fff':'inherit'}">${kY?p(th/kY):'–'}</td></tr>`}).join('');
+ $('qt').innerHTML=qtab(Q)+`<h2 style="margin-top:12px">% hoàn thành KH quý theo kênh</h2><table><tr><th>Kênh</th><th>Quý 1</th><th>Quý 2</th><th>Quý 3</th><th>Quý 4</th><th>% KH năm</th></tr>${mt}</table><div class="lg">Ô % KH năm tô màu theo % mục tiêu lũy kế.</div>`;
+}
+
+function r6(){
+ try {
+ const{g,c,n}=S(),sel=$('fu').value,q=+$('fq').value,cw=sm(W,n),qi=q-1,mm=q?qmon(qi,n):0;
+ $('uh').textContent=q?'Tỷ lệ hoàn thành KH Quý '+q+' theo đơn vị':'Tỷ lệ hoàn thành KH năm theo đơn vị';
+ const rows=q&&!mm?[]:V_data.filter(v=>g?v[1]==g:v[1]!='Khác').map(v=>{
+     const a=ua(v,c),kY=a.khY;
+     let p_=null;
+     if(q){
+         const kq=kY*sm(W.slice(3*qi,3*qi+mm),mm),tq=sm(a.th.slice(3*qi,3*qi+mm),mm);
+         p_=kq?tq/kq:null;
+     } else {
+         p_=kY?sm(a.th,n)/kY:null;
+     }
+     let m_val = q ? p_ : (cw&&kY?sm(a.th,n)/(kY*cw):-1);
+     return{n:v[0],kh:kY,p:p_,m:m_val}
+ }).filter(o=>o.kh>0&&o.p!=null).sort((x,y)=>y.p-x.p);
+ 
+ const nG=rows.filter(o=>o.m>=1).length,nA=rows.filter(o=>o.m>=.7&&o.m<1).length,nR=rows.length-nG-nA,pc=x=>rows.length?x/rows.length*100:0;
+ $('us').textContent=rows.length+' đơn vị';
+ $('dist').innerHTML=rows.length?`<div class="mix">${[[nG,'var(--g)',q?'đạt KH quý':'đạt mục tiêu'],[nA,'var(--a)','70–100%'],[nR,'var(--r)','dưới 70%']].map(([x,cl,t])=>`<div style="width:${pc(x)}%;background:${cl}">${x?x+' '+t:''}</div>`).join('')}</div>`:'';
+ $('ub').innerHTML=rows.length?rows.map(o=>`<div class="row ur${o.n==sel?' sel':''}" data-u="${o.n}" style="grid-template-columns:112px 1fr 44px;cursor:pointer"><span class="n" title="${o.n}">${o.n}</span><div class="t"><i style="width:${Math.min(o.p,2)*50}%;background:${col(o.m)}"></i>${q?'':`<b class="mk" style="left:${cw*50}%"></b>`}</div><span class="v">${p(o.p)}</span></div>`).join(''):'<div class="lg">Chưa có thực hiện trong kỳ đã chọn.</div>';
+ $('ul').innerHTML='Thanh = '+(q?'% hoàn thành KH Quý '+q:'% KH năm')+' (tối đa 200%) · vạch đứt giữa = 100%'+(q?'':' · vạch đậm = mục tiêu lũy kế đến tháng đã chọn')+' · màu: xanh ≥100% '+(q?'KH quý':'mục tiêu')+', vàng ≥70%, đỏ &lt;70% · bấm vào một dòng để xem chi tiết. Bộ lọc nhóm, kênh, tháng ở trên đều áp dụng.';
+ rq(g,c,n,cw);
+ 
+ if(!sel){
+    $('ud').innerHTML=`<div class="c" style="margin-top:10px;text-align:center;padding:30px;"><span class="lg">Hãy bấm chọn một đơn vị ở bảng trên để xem chi tiết các chỉ số của đơn vị đó.</span></div>`;
+    return;
+ }
+ 
+ const v=V_data.find(x=>x[0]==sel);
+ if(!v) return;
+ const a=ua(v,'T'),khY=a.khY,th=sm(a.th,n),gap=Math.max(khY-th,0),pace=th/n,need=n<12?gap/(12-n):0,ck=sm(a.ck,n),tc=sm(v[9],n);
+ const rk=V_data.filter(x=>x[1]!='Khác').map(x=>{const b=ua(x,'T');return{n:x[0],pm:(b.khY&&cw)?sm(b.th,n)/(b.khY*cw):-1}}).sort((x,y)=>y.pm-x.pm),pos=rk.findIndex(o=>o.n==sel)+1;
+ const K=[['KH năm',f(khY)],['Thực hiện lũy kế T'+n,f(th)],['% KH năm',khY?p(th/khY):'–'],['% mục tiêu lũy kế',(khY&&cw)?p(th/(khY*cw)):'–'],['Xếp hạng theo % mục tiêu',pos?pos+' / '+rk.length:'–'],['Gap còn lại',f(gap)],['thực hiện cần / hiện tại',f(need)+' / '+f(pace)],['Hệ số tăng tốc',pace?isFinite(need/pace)?(need/pace).toFixed(2)+'x':'–':'–'],['dự kiến (thực hiện bình quân)',khY?p((th+pace*(12-n))/khY):'–'],['Tăng trưởng cùng kỳ',ck>1000?(th/ck-1>=0?'+':'')+p(th/ck-1):'–'],['Kinh doanh thẻ',f(tc)+(th?' ('+p(tc/th)+')':'')]];
+ const tb=['BL','GT','B2B'].map(C=>{const u=ua(v,C),t=sm(u.th,n),k=u.khY;return`<tr><td>${CH[C]}</td><td>${f(k)}</td><td>${f(t)}</td><td>${k?p(t/k):'–'}</td><td class="h" style="background:${k?col(t/(k*cw)):'transparent'};color:${k?'#fff':'inherit'}">${k?p(t/(k*cw)):'–'}</td><td>${f(Math.max(k-t,0))}</td></tr>`}).join('');
+ const Wd=560,H=200,L=44,B=24,T=10,pw=(Wd-L-8)/12,st=Array(n).fill(0).map((_,i)=>['BL','GT','B2B'].reduce((s,k)=>s+Math.max((v[CI[k][1]][i]||0),0),0)),mx=Math.max(...a.kh,...st,...a.ck.slice(0,n),1)*1.1,y=q=>H-B-q/mx*(H-B-T),x=i=>L+pw*i+pw/2,cl={BL:'#1f5fbf',GT:'#2e9e5b',B2B:'#e0a12b'};
+ let s=`<svg viewBox="0 0 ${Wd} ${H}">`;for(let i=0;i<=4;i++){const q=mx/1.1*i/4;s+=`<line x1="${L}" x2="${Wd-8}" y1="${y(q)}" y2="${y(q)}" stroke="var(--bd)"/><text x="${L-4}" y="${y(q)+3}" text-anchor="end">${f(q/1000)}k</text>`}
+ for(let i=0;i<12;i++){s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">T${i+1}</text>`;if(i<n){let b=0;for(const k of['BL','GT','B2B']){const q=Math.max((v[CI[k][1]][i]||0),0);s+=`<rect x="${x(i)-pw*.3}" y="${y(b+q)}" width="${pw*.6}" height="${y(b)-y(b+q)}" fill="${cl[k]}"/>`;b+=q}}}
+ s+=`<polyline fill="none" stroke="var(--r)" stroke-width="2" points="${a.kh.map((q,i)=>x(i)+','+y(q)).join(' ')}"/><polyline fill="none" stroke="var(--mu)" stroke-width="2" stroke-dasharray="4 3" points="${a.ck.slice(0,n).map((q,i)=>x(i)+','+y(q)).join(' ')}"/></svg>`;
+ $('ud').innerHTML=`<div class="c" style="margin-top:10px"><h2>Chi tiết đơn vị: ${sel} <span class="lg">· ${v[1]}</span> <button class="btn" id="uc" style="float:right">Bỏ chọn</button></h2><div class="kp">${K.map(([q,r])=>`<div class="k"><span>${q}</span><b style="font-size:19px">${r}</b></div>`).join('')}</div><div class="grid"><div class="c"><h2>Kết quả theo kênh</h2><div class="sc"><table><tr><th>Kênh</th><th>KH năm</th><th>Thực hiện</th><th>% KH năm</th><th>% mục tiêu</th><th>Gap</th></tr>${tb}</table></div></div><div class="c"><h2>Kết quả theo quý</h2><div class="sc">${qtab(qrows(a,n))}</div></div><div class="c"><h2>Thực hiện theo tháng</h2>${s}<div class="lg">Cột chồng: <span style="color:${cl.BL}">■</span> Bán lẻ <span style="color:${cl.GT}">■</span> GT <span style="color:${cl.B2B}">■</span> B2B · đường đỏ = KH tháng · đường xám đứt = cùng kỳ năm trước</div></div></div></div>`
+ } catch(e) { console.error("Lỗi r6", e); }
+}
+
+$('fu').addEventListener('input',all);
+$('ub').addEventListener('click',e=>{const r=e.target.closest('.ur');if(r){$('fu').value=r.dataset.u;all();$('ud').scrollIntoView({behavior:'smooth',block:'nearest'})}});
+$('ud').addEventListener('click',e=>{if(e.target.id=='uc'){$('fu').value='';all()}});
+
+function all(){
+    try{ r1(); }catch(e){console.error(e);}
+    try{ r2(); }catch(e){console.error(e);}
+    try{ r3(); }catch(e){console.error(e);}
+    try{ r4(); }catch(e){console.error(e);}
+    try{ r6(); }catch(e){console.error(e);}
+    try{ if(Tender_Data.length > 0) renderTenderTab(); }catch(e){console.error(e);}
+}
+
+['fg','fc','fn','fq'].forEach(i=>$(i).addEventListener('input',all));
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.v2').forEach(x=>x.classList.toggle('on',x.id=='p'+b.dataset.t));$('fb').style.display=b.dataset.t=='5'||b.dataset.t=='6'?'none':'flex'}));
+
+// ==============================================
+// FETCH DOANH THU & ĐẤU THẦU ĐỘC LẬP
+// ==============================================
+async function loadGoogleSheetData() {
+    try {
+        const noCacheUrl = SHEET_CSV_URL + "&_t=" + new Date().getTime();
+        const res = await fetch(noCacheUrl);
+        const text = await res.text();
+        
+        if (text.trim().startsWith("<!DOCTYPE html>")) {
+            $('loading').innerHTML = `<b>LỖI KẾT NỐI:</b><br><br>Google Sheet Doanh thu đang bị chặn quyền truy cập!`;
+            return;
+        }
+
+        const rows = [];
+        let row = [], inQuotes = false, val = "";
+        let delimiter = '\t';
+        if (text.indexOf('\t') === -1) delimiter = text.indexOf(';') !== -1 ? ';' : ',';
+        
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') inQuotes = !inQuotes;
+            else if (c === delimiter && !inQuotes) { row.push(val.trim()); val = ""; }
+            else if (c === '\n' && !inQuotes) { row.push(val.trim()); if(row.join('') !== '') rows.push(row); row = []; val = ""; }
+            else if (c !== '\r') val += c;
+        }
+        if (val) row.push(val.trim());
+        if (row.length > 0 && row.join('') !== '') rows.push(row);
+
+        N_data = []; // KHỞI TẠO N_DATA Ở ĐÂY ĐỂ ĐẨY DỮ LIỆU ÂM THẺ
+        const U_map = {}; 
+        let detectedMax = 0;
+        const M_groups = {
+            "Khác": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "TT Hà Nội": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "TT TP.HCM": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "Tỉnh/TP": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]},
+            "PHBC+TCDN": {BL:{kh:[],th:[],ck:[]}, GT:{kh:[],th:[],ck:[]}, B2B:{kh:[],th:[],ck:[]}, the:[]}
+        };
+
+        Object.keys(M_groups).forEach(g => {
+            ['BL','GT','B2B'].forEach(c => {
+                M_groups[g][c].kh = Array(12).fill(0);
+                M_groups[g][c].th = Array(12).fill(0);
+                M_groups[g][c].ck = Array(12).fill(0);
+            });
+            M_groups[g].the = Array(12).fill(0);
+        });
+
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i];
+            if (cols.length < 3 || !cols[0]) continue;
+            
+            let bdx = cols[0] ? cols[0].toString().trim() : "";
+            let nhom = cols[1] ? cols[1].toString().trim() : "";
+            
+            let bdx_up = bdx.toUpperCase();
+            let nhom_up = nhom.toUpperCase();
+
+            if (nhom_up.includes("TCDN") || nhom_up.includes("TCND") || nhom_up.includes("PHBC") ||
+                bdx_up.includes("TCDN") || bdx_up.includes("TCND") || bdx_up.includes("PHBC")) {
+                nhom = "PHBC+TCDN";
+                bdx = "(PHBC+TCDN)";
+            } else if (!nhom) {
+                nhom = "Khác";
+            }
+
+            const thangMatch = cols[2] ? cols[2].toString().match(/\d+/) : null;
+            if (!thangMatch) continue;
+            const thang = parseInt(thangMatch[0]);
+
+            if (thang >= 1 && thang <= 12) {
+                const kh_bl = parseVNNumber(cols[4]);
+                const kh_gt = parseVNNumber(cols[5]);
+                const kh_b2b = parseVNNumber(cols[6]);
+                
+                const th_bl = parseVNNumber(cols[8]);
+                const th_gt = parseVNNumber(cols[9]);
+                const th_b2b = parseVNNumber(cols[10]);
+                
+                const ck_tong = parseVNNumber(cols[11]);
+                const ck_bl = parseVNNumber(cols[12]);
+                const ck_gt = parseVNNumber(cols[13]);
+                const ck_b2b = parseVNNumber(cols[14]);
+                const th_the = parseVNNumber(cols[15]);
+
+                // ĐẨY DỮ LIỆU ĐƠN VỊ ÂM THẺ VÀO N_DATA
+                if (th_the < 0) {
+                    N_data.push([bdx, nhom, thang, th_the]);
+                }
+
+                if (th_bl !== 0 || th_gt !== 0 || th_b2b !== 0 || th_the !== 0 || ck_tong !== 0 || ck_bl !== 0 || ck_gt !== 0 || ck_b2b !== 0) {
+                    if (thang > detectedMax) detectedMax = thang;
+                }
+
+                if (!U_map[bdx]) {
+                    U_map[bdx] = {
+                        nhom: nhom,
+                        kh_bl: 0, kh_gt: 0, kh_b2b: 0,
+                        th_bl_arr: Array(12).fill(0),
+                        th_gt_arr: Array(12).fill(0),
+                        th_b2b_arr: Array(12).fill(0),
+                        ck_tong_arr: Array(12).fill(0),
+                        th_the_arr: Array(12).fill(0),
+                        tot_the: 0
+                    };
+                }
+                
+                U_map[bdx].kh_bl += kh_bl; 
+                U_map[bdx].kh_gt += kh_gt;
+                U_map[bdx].kh_b2b += kh_b2b;
+                U_map[bdx].th_bl_arr[thang - 1] += th_bl;
+                U_map[bdx].th_gt_arr[thang - 1] += th_gt;
+                U_map[bdx].th_b2b_arr[thang - 1] += th_b2b;
+                U_map[bdx].ck_tong_arr[thang - 1] += ck_tong;
+                U_map[bdx].th_the_arr[thang - 1] += th_the;
+                U_map[bdx].tot_the += th_the;
+
+                if(!M_groups[nhom]) {
+                    M_groups[nhom] = {BL:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, GT:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, B2B:{kh:Array(12).fill(0),th:Array(12).fill(0),ck:Array(12).fill(0)}, the:Array(12).fill(0)};
+                }
+                M_groups[nhom].BL.kh[thang-1] += kh_bl;
+                M_groups[nhom].GT.kh[thang-1] += kh_gt;
+                M_groups[nhom].B2B.kh[thang-1] += kh_b2b;
+                M_groups[nhom].BL.th[thang-1] += th_bl;
+                M_groups[nhom].GT.th[thang-1] += th_gt;
+                M_groups[nhom].B2B.th[thang-1] += th_b2b;
+                M_groups[nhom].BL.ck[thang-1] += ck_bl;
+                M_groups[nhom].GT.ck[thang-1] += ck_gt;
+                M_groups[nhom].B2B.ck[thang-1] += ck_b2b;
+                M_groups[nhom].the[thang-1] += th_the;
+            }
+        }
+
+        if (Object.keys(U_map).length > 0) {
+            max_month_th = detectedMax > 0 ? detectedMax : 1; 
+            U_data = []; V_data = [];
+            for (const bdx in U_map) {
+                const u = U_map[bdx];
+                U_data.push([bdx, u.nhom, u.kh_bl, u.kh_gt, u.kh_b2b, sm(u.th_bl_arr, max_month_th), sm(u.th_gt_arr, max_month_th), sm(u.th_b2b_arr, max_month_th), sm(u.ck_tong_arr, max_month_th), u.tot_the]);
+                V_data.push([bdx, u.nhom, u.kh_bl, u.kh_gt, u.kh_b2b, u.th_bl_arr.slice(0, 12), u.th_gt_arr.slice(0, 12), u.th_b2b_arr.slice(0, 12), u.ck_tong_arr.slice(0, 12), u.th_the_arr.slice(0, 12)]);
+            }
+
+            V_data.sort((a,b) => {
+                if (a[0] === '(PHBC+TCDN)') return -1;
+                if (b[0] === '(PHBC+TCDN)') return 1;
+                if (a[1] === 'Khác') return 1;
+                if (b[1] === 'Khác') return -1;
+                return a[0].localeCompare(b[0], 'vi');
+            });
+
+            M_data = M_groups;
+            const smDropdown = $('fn');
+            smDropdown.innerHTML = '';
+            for(let j=1; j<=max_month_th; j++) smDropdown.add(new Option('T'+j, j, 0, j===max_month_th));
+            $('fn').value = max_month_th;
+
+            $('page-sub').innerText = `Dữ liệu thực hiện cập nhật tự động đến T${max_month_th}/${latest_year} · Đơn vị giả định: triệu đồng · Được thiết kế bởi ThanhDD`;
+            $('loading').style.display = 'none';
+            rrep();
+            $('fu').innerHTML = '<option value="">— Tất cả đơn vị —</option>';
+            V_data.forEach(v=>$('fu').add(new Option(v[0],v[0])));
+            all();
+        } else {
+             $('loading').innerHTML = `<b>LỖI DỮ LIỆU:</b><br><br>Không tìm thấy dữ liệu hợp lệ trong Sheet Doanh thu.`;
+        }
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu từ Google Sheet Doanh thu:", error);
+    }
+}
+
+async function loadTenderData() {
+    try {
+        const res = await fetch(TENDER_CSV_URL + "&_t=" + new Date().getTime());
+        const text = await res.text();
+
+        const rows = [];
+        let row = [], inQuotes = false, val = "";
+        let delimiter = '\t';
+        if (text.indexOf('\t') === -1) delimiter = text.indexOf(';') !== -1 ? ';' : ',';
+        
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') inQuotes = !inQuotes;
+            else if (c === delimiter && !inQuotes) { row.push(val.trim()); val = ""; }
+            else if (c === '\n' && !inQuotes) { row.push(val.trim()); if(row.join('') !== '') rows.push(row); row = []; val = ""; }
+            else if (c !== '\r') val += c;
+        }
+        if (val) row.push(val.trim());
+        if (row.length > 0 && row.join('') !== '') rows.push(row);
+
+        if (rows.length > 1) {
+            const h = rows[0].map(s => s ? s.toLowerCase() : "");
+            
+            const cT = h.findIndex(x => x.includes("tình trạng"));
+            const cThang = h.findIndex(x => x === "tháng" || x === "thang");
+            const cTrucTuyen = h.findIndex(x => x.includes("chào giá") || x.includes("trực tuyến"));
+            const cDv = 9; // Index 9 (Cột J)
+            const cCDT = h.findIndex(x => x.includes("chủ đầu tư"));
+            const cGia = 18; // Index 18 (Cột S)
+            const cNam = 21; // Index 21 (Cột V)
+            const cKhuVuc = 24; // Index 24 (Cột Y)
+
+            Tender_Data = rows.slice(1).map(r => ({
+                tinhTrang: cT >= 0 ? (r[cT] || '') : '',
+                thang: cThang >= 0 ? (r[cThang] || '') : '',
+                donVi: (cDv >= 0 && r[cDv]) ? r[cDv] : 'Chưa rõ',
+                trucTuyen: cTrucTuyen >= 0 ? (r[cTrucTuyen] || '') : '',
+                chuDauTu: cCDT >= 0 ? (r[cCDT] || '') : '',
+                giaTrung: (cGia >= 0 && r[cGia]) ? parseVNNumber(r[cGia]) : 0,
+                nam: cNam >= 0 ? (r[cNam] || '') : '',
+                khuVuc: cKhuVuc >= 0 ? (r[cKhuVuc] || '') : ''
+            }));
+            
+            let years = [...new Set(Tender_Data.map(d => {
+                let yStr = d.nam.toString().replace(/[^\d]/g, '');
+                return yStr.length >= 4 ? yStr.substring(0,4) : null;
+            }).filter(y => y))].sort();
+            
+            let ySelect = $('td-year');
+            ySelect.innerHTML = '<option value="all">Tất cả các năm</option>';
+            years.forEach(y => ySelect.add(new Option(y, y)));
+            
+            let mSelect = $('td-month');
+            mSelect.innerHTML = '<option value="all">Tất cả các tháng</option>';
+            for(let i=1; i<=12; i++) mSelect.add(new Option('Tháng '+i, i));
+
+            if($('p6').classList.contains('on') || Tender_Data.length > 0) renderTenderTab();
+        }
+    } catch(e) {
+        console.error("Lỗi tải data Đấu thầu", e);
+        $('tender-kpi').innerHTML = `<div class="k" style="color:red; grid-column: span 5;">Đang chờ cập nhật liên kết dữ liệu đấu thầu hợp lệ...</div>`;
+    }
+}
+
+window.changeTenderPage = function(tableId, dir) {
+    if (tableId === 1) {
+        window.t1Page += dir;
+        drawTenderUnits();
+    } else {
+        window.t2Page += dir;
+        drawTenderInvestors();
+    }
+}
+
+function drawTenderUnits() {
+    let limit = 10;
+    let total = window.unitTenderList.length;
+    let maxP = Math.max(0, Math.ceil(total/limit) - 1);
+    if (window.t1Page < 0) window.t1Page = 0;
+    if (window.t1Page > maxP) window.t1Page = maxP;
+    
+    let arr = window.unitTenderList.slice(window.t1Page*limit, window.t1Page*limit + limit);
+    let startIdx = window.t1Page*limit + 1;
+    let tbody = arr.map((d, i) => `<tr>
+        <td style="text-align:left">${startIdx + i}.</td>
+        <td style="text-align:left">${d.n}</td>
+        <td style="text-align:center">${d.thamGia}</td>
+        <td style="text-align:center" class="ok">${d.trung}</td>
+        <td style="text-align:center" class="fl">${d.truot}</td>
+        <td style="text-align:center">${d.trucTuyen}</td>
+        <td><b>${f(d.giaTrung)}</b></td>
+    </tr>`).join('');
+    
+    let html = `<table><tr><th style="text-align:left;width:20px">#</th><th style="text-align:left">Đơn vị</th><th style="text-align:center">Tham gia</th><th style="text-align:center">Trúng</th><th style="text-align:center">Trượt</th><th style="text-align:center">Trực tuyến</th><th>Tổng giá trúng ▾</th></tr>${tbody}</table>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px">
+        <button class="btn" onclick="changeTenderPage(1, -1)" ${window.t1Page===0?'disabled':''}>◀ Trước</button>
+        <span class="lg">Trang ${window.t1Page+1} / ${maxP+1}</span>
+        <button class="btn" onclick="changeTenderPage(1, 1)" ${window.t1Page>=maxP?'disabled':''}>Sau ▶</button>
+    </div>`;
+    $('tender-units').innerHTML = html;
+}
+
+function drawTenderInvestors() {
+    let limit = 10;
+    let total = window.invTenderList.length;
+    let maxP = Math.max(0, Math.ceil(total/limit) - 1);
+    if (window.t2Page < 0) window.t2Page = 0;
+    if (window.t2Page > maxP) window.t2Page = maxP;
+    
+    let arr = window.invTenderList.slice(window.t2Page*limit, window.t2Page*limit + limit);
+    let startIdx = window.t2Page*limit + 1;
+    let tbody = arr.map((d, i) => `<tr>
+        <td style="text-align:left">${startIdx + i}.</td>
+        <td style="text-align:left;white-space:normal;min-width:180px">${d.n}</td>
+        <td style="text-align:left;white-space:normal">${d.dv}</td>
+        <td style="text-align:center" class="ok">${d.trung}</td>
+        <td style="text-align:center">${d.trucTuyen}</td>
+        <td><b>${f(d.giaTrung)}</b></td>
+    </tr>`).join('');
+    
+    let html = `<table><tr><th style="text-align:left;width:20px">#</th><th style="text-align:left">Chủ đầu tư</th><th style="text-align:left">Đơn vị</th><th style="text-align:center">Trúng</th><th style="text-align:center">Trực tuyến</th><th>Tổng giá trúng ▾</th></tr>${tbody}</table>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px">
+        <button class="btn" onclick="changeTenderPage(2, -1)" ${window.t2Page===0?'disabled':''}>◀ Trước</button>
+        <span class="lg">Trang ${window.t2Page+1} / ${maxP+1}</span>
+        <button class="btn" onclick="changeTenderPage(2, 1)" ${window.t2Page>=maxP?'disabled':''}>Sau ▶</button>
+    </div>`;
+    $('tender-invs').innerHTML = html;
+}
+
+window.renderTenderTab = function() {
+    if (!Tender_Data.length) return;
+    
+    const selGroup = $('fg').value;
+    const selUnit = $('fu').value;
+    const fY = $('td-year') ?$('td-year').value : 'all';
+    const fM = $('td-month') ?$('td-month').value : 'all';
+
+    let won = 0, lost = 0, online = 0, totalVal = 0;
+    let khuVucMap = {}, namMap = {}, thangNamMap = {};
+    let unitMap = {}, invMap = {};
+
+    Tender_Data.forEach(d => {
+        let tStr = d.tinhTrang.toLowerCase();
+        let isWon = tStr.includes('trúng') || tStr.includes('thành công');
+        let isLost = tStr.includes('trượt') || tStr.includes('hủy') || tStr.includes('không');
+        
+        if (!isWon && !isLost) return; 
+        
+        let tMatch = d.thang.match(/\d+/);
+        let m = tMatch ? parseInt(tMatch[0]) : 0;
+        
+        let yStr = d.nam ? d.nam.toString().replace(/[^\d]/g, '') : '';
+        let y = yStr.length >= 4 ? yStr.substring(0,4) : '';
+
+        let dv = d.donVi;
+        let nhom_up = dv.toUpperCase();
+        if (nhom_up.includes("TCDN") || nhom_up.includes("TCND") || nhom_up.includes("PHBC")) dv = "(PHBC+TCDN)";
+        
+        if (selUnit && selUnit !== "(PHBC+TCDN)" && dv !== selUnit) return; 
+        if (selGroup && selGroup !== "Tất cả") {
+             let foundU = U_data.find(x => x[0] === dv);
+             if (foundU && foundU[1] !== selGroup) return;
+        }
+
+        if (isWon && y) {
+            if (!thangNamMap[y]) thangNamMap[y] = Array(12).fill(0);
+            if (m >= 1 && m <= 12) thangNamMap[y][m - 1] += d.giaTrung;
+        }
+
+        if (isWon && y && (fM === 'all' || m == fM)) {
+            namMap[y] = (namMap[y] || 0) + d.giaTrung;
+        }
+
+        if (fY !== 'all' && y !== fY) return;
+        if (fM !== 'all' && m != fM) return;
+
+        let isOnline = d.trucTuyen.toLowerCase().includes('tt') || d.trucTuyen.toLowerCase().includes('có') || d.trucTuyen.toLowerCase().includes('trực tuyến');
+        
+        if (isWon) won++;
+        if (isLost) lost++;
+        if (isOnline) online++;
+        if (isWon) totalVal += d.giaTrung;
+        
+        if (d.khuVuc && !d.khuVuc.includes('#N/A') && d.khuVuc.trim() !== '') {
+            khuVucMap[d.khuVuc] = (khuVucMap[d.khuVuc] || 0) + 1;
+        }
+        
+        if (dv) {
+            if (!unitMap[dv]) unitMap[dv] = {n: dv, thamGia: 0, trung: 0, truot: 0, trucTuyen: 0, giaTrung: 0};
+            unitMap[dv].thamGia++;
+            if (isWon) unitMap[dv].trung++;
+            if (isLost) unitMap[dv].truot++;
+            if (isOnline) unitMap[dv].trucTuyen++;
+            if (isWon) unitMap[dv].giaTrung += d.giaTrung;
+        }
+        
+        let cdt = d.chuDauTu;
+        if (cdt && isWon) {
+            if (!invMap[cdt]) invMap[cdt] = {n: cdt, dv: dv, trung: 0, trucTuyen: 0, giaTrung: 0};
+            invMap[cdt].trung++;
+            if (isOnline) invMap[cdt].trucTuyen++;
+            invMap[cdt].giaTrung += d.giaTrung;
+        }
+    });
+
+    let total = won + lost;
+    let winRate = total > 0 ? (won / total) : 0;
+    let onlineRate = total > 0 ? (online / total) : 0;
+    let lostRate = total > 0 ? (lost / total) : 0;
+
+    const tenderK = [
+        ['Giá trúng thầu', `<strong style="color:var(--g)">${f(totalVal)}</strong>`],
+        ['SL gói thầu tham gia', total],
+        ['SL gói thầu đã trúng', `<strong style="color:var(--a)">${won}</strong> <small style="font-size:13px;font-weight:normal;color:var(--tx)">(${p(winRate)})</small>`],
+        ['SL gói trực tuyến', `<strong style="color:var(--ac)">${online}</strong> <small style="font-size:13px;font-weight:normal;color:var(--tx)">(${p(onlineRate)})</small>`],
+        ['SL gói thầu thất bại', `<strong class="pu">${lost}</strong> <small style="font-size:13px;font-weight:normal;color:var(--tx)">(${p(lostRate)})</small>`]
+    ];
+    $('tender-kpi').innerHTML = tenderK.map(([x,y]) => `<div class="k"><span>${x}</span><b>${y}</b></div>`).join('');
+
+    let pieHtml = '';
+    let pieTotal = Object.values(khuVucMap).reduce((a,b)=>a+b,0);
+    if (pieTotal > 0) {
+        let svg = '<svg viewBox="-1 -1 2 2" style="transform: rotate(-90deg); width: 100%; max-width:200px; display: block; margin: 0 auto;">';
+        let acc = 0;
+        const colors = ['#5b9bff','#e67e22','#2ecc71','#1abc9c','#f1c40f','#9b59b6','#34495e','#e74c3c','#7f8c8d'];
+        let legends = '';
+        Object.entries(khuVucMap).sort((a,b)=>b[1]-a[1]).forEach(([k,v], i) => {
+            let pct = v/pieTotal;
+            let start = acc * Math.PI * 2;
+            let end = (acc + pct) * Math.PI * 2;
+            let x1 = Math.cos(start), y1 = Math.sin(start);
+            let x2 = Math.cos(end), y2 = Math.sin(end);
+            let largeArc = pct > 0.5 ? 1 : 0;
+            if (pct === 1) {
+                svg += `<circle cx="0" cy="0" r="1" fill="${colors[i%colors.length]}"/>`;
+            } else {
+                svg += `<path d="M 0 0 L ${x1} ${y1} A 1 1 0 ${largeArc} 1 ${x2} ${y2} Z" fill="${colors[i%colors.length]}" stroke="#fff" stroke-width="0.02"/>`;
+            }
+            legends += `<div style="font-size:11px; display:flex; align-items:center; gap:6px"><span style="display:inline-block;width:12px;height:12px;background:${colors[i%colors.length]}; border-radius:50%"></span>${k} (${p(pct)})</div>`;
+            acc += pct;
+        });
+        svg += '<circle cx="0" cy="0" r="0.45" fill="var(--cd)"/>';
+        svg += '</svg>';
+        pieHtml = `<div style="display:grid; grid-template-columns: 1fr 1fr; align-items: center; gap:10px; height: 200px"><div>${svg}</div><div style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto">${legends}</div></div>`;
+    } else {
+        pieHtml = `<div class="lg" style="height:200px; display:flex; align-items:center; justify-content:center">Chưa có dữ liệu Khu vực</div>`;
+    }
+    $('tender-pie').innerHTML = pieHtml;
+
+    let barHtml = '';
+    let barEntries = Object.entries(namMap).sort((a,b)=>a[0].localeCompare(b[0])); 
+    if (barEntries.length) {
+        let maxBar = Math.max(...Object.values(namMap), 1);
+        barHtml = `<div style="display:flex;flex-direction:column;gap:16px;margin-top:10px; height: 180px; justify-content:center">
+        <div class="lg"><span style="color:var(--ac)">■</span> Giá trúng thầu</div>`;
+        barEntries.forEach(([y, val]) => {
+            let pct = val/maxBar * 100;
+            barHtml += `
+                <div class="row" style="grid-template-columns: 40px 1fr 60px;">
+                    <span class="n" style="font-weight:bold">${y}</span>
+                    <div class="t p" style="height:32px; background:transparent"><i style="width:${pct}%;background:var(--ac)"></i></div>
+                    <span class="v" style="color:var(--tx); font-weight:bold">${(val/1000000000).toFixed(1)} Tỷ</span>
+                </div>
+            `;
+        });
+        barHtml += `</div>`;
+    } else {
+        barHtml = `<div class="lg" style="height:200px; display:flex; align-items:center; justify-content:center">Chưa có dữ liệu Doanh thu năm</div>`;
+    }
+    $('tender-bar').innerHTML = barHtml;
+
+    let lineHtml = '';
+    if (Object.keys(thangNamMap).length) {
+        let mxLine = 1;
+        Object.values(thangNamMap).forEach(arr => {
+            let lm = Math.max(...arr);
+            if (lm > mxLine) mxLine = lm;
+        });
+        mxLine *= 1.1; 
+        let Wd = 400, H = 180, L = 40, B = 20, T = 10, pw = (Wd-L)/12;
+        let yLine = v => H - B - v/mxLine * (H-B-T);
+        let xLine = idx => L + pw*idx + pw/2;
+        let sL = `<svg viewBox="0 0 ${Wd} ${H}" style="height:175px">`;
+        sL += `<line x1="${L}" x2="${Wd}" y1="${yLine(0)}" y2="${yLine(0)}" stroke="var(--bd)"/>`;
+        for(let i=0;i<12;i++) sL += `<text x="${xLine(i)}" y="${H-5}" text-anchor="middle" font-size="9">T${i+1}</text>`;
+        
+        let colorsL = ['var(--ac)', 'var(--a)', 'var(--g)'];
+        let idxColor = 0;
+        let legendsL = '';
+        Object.entries(thangNamMap).sort().forEach(([year, arr]) => {
+            let pts = arr.map((v,j) => `${xLine(j)},${yLine(v)}`).join(' ');
+            let c = colorsL[idxColor % colorsL.length];
+            sL += `<polyline fill="none" stroke="${c}" stroke-width="2.5" points="${pts}"/>`;
+            arr.forEach((v,j) => {
+                sL += `<circle cx="${xLine(j)}" cy="${yLine(v)}" r="3" fill="${c}"/>`;
+            });
+            legendsL += `<span style="color:${c}; margin-left:10px; font-size:12px">●</span> Năm ${year} `;
+            idxColor++;
+        });
+        sL += `</svg><div class="lg" style="text-align:center; margin-top:5px">${legendsL}</div>`;
+        lineHtml = sL;
+    } else {
+        lineHtml = `<div class="lg" style="height:200px; display:flex; align-items:center; justify-content:center">Chưa có dữ liệu các tháng</div>`;
+    }
+    $('tender-line').innerHTML = lineHtml;
+
+    window.unitTenderList = Object.values(unitMap).sort((a,b)=>b.giaTrung - a.giaTrung);
+    window.invTenderList = Object.values(invMap).sort((a,b)=>b.giaTrung - a.giaTrung);
+    
+    window.t1Page = 0;
+    window.t2Page = 0;
+    
+    drawTenderUnits();
+    drawTenderInvestors();
+}
+
+window.onload = () => {
+    loadGoogleSheetData();
+    loadTenderData();
+};
+</script></body></html>
